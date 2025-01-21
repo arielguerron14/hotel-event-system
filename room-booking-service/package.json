@@ -1,0 +1,19 @@
+{
+  "name": "room-booking-service",
+  "version": "1.0.0",
+  "description": "Microservicio de reservas de habitaciones",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.10.0",
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
+

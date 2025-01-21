@@ -1,14 +1,21 @@
-const notifications = [];
+const Notification = require('../models/notificationModel');
+const { sendEmail } = require('../utils/emailUtils');
 
-const sendNotification = (req, res) => {
-  const { userId, message } = req.body;
-  const notification = { id: notifications.length + 1, userId, message, date: new Date() };
-  notifications.push(notification);
-  res.status(201).json(notification);
+const sendNotification = async (req, res) => {
+  const { email, subject, message } = req.body;
+
+  if (!email || !subject || !message) {
+    return res.status(400).json({ error: 'Email, subject, and message are required' });
+  }
+
+  try {
+    await sendEmail(email, subject, message);
+    const notification = new Notification({ email, subject, message, status: 'sent' });
+    await notification.save();
+    res.status(200).json({ message: 'Notification sent successfully', notification });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send notification' });
+  }
 };
 
-const getNotifications = (req, res) => {
-  res.json(notifications);
-};
-
-module.exports = { sendNotification, getNotifications };
+module.exports = { sendNotification };
