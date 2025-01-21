@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=mysecretkey
+      - DATABASE_URL=mysql://admin:securepassword@rds-endpoint:3306/hotel_event_db
+    networks:
+      - hotel-network
+
+  event-service:
+    build:
+      context: ./event-service
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/events
+    networks:
+      - hotel-network
+
+  notification-service:
+    build:
+      context: ./notification-service
+    ports:
+      - "3002:3002"
+    environment:
+      - EMAIL_SERVICE_API_KEY=example-api-key
+    networks:
+      - hotel-network
+
+  payment-service:
+    build:
+      context: ./payment-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PAYMENT_GATEWAY_URL=https://example-payment-gateway.com
+    networks:
+      - hotel-network
+
+networks:
+  hotel-network:
+    driver: bridge

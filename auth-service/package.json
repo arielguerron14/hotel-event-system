@@ -1,0 +1,19 @@
+{
+    "name": "auth-service",
+    "version": "1.0.0",
+    "description": "Microservicio de autenticación para el sistema de gestión de eventos",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js",
+      "test": "jest"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "jsonwebtoken": "^9.0.0",
+      "dotenv": "^16.0.3"
+    },
+    "devDependencies": {
+      "jest": "^29.0.0"
+    }
+  }
+  

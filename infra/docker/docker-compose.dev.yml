@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  auth-service:
+    build:
+      context: ../auth-service
+      dockerfile: ../docker/base.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=mysecretkey
+      - DATABASE_URL=mysql://admin:securepassword@rds-endpoint:3306/hotel_event_db
+    volumes:
+      - ../auth-service:/app
+    networks:
+      - hotel-network
+
+  event-service:
+    build:
+      context: ../event-service
+      dockerfile: ../docker/base.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mongodb://mongo:27017/events
+    volumes:
+      - ../event-service:/app
+    networks:
+      - hotel-network
+
+  notification-service:
+    build:
+      context: ../notification-service
+      dockerfile: ../docker/base.Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - EMAIL_SERVICE_API_KEY=example-api-key
+    volumes:
+      - ../notification-service:/app
+    networks:
+      - hotel-network
+
+  payment-service:
+    build:
+      context: ../payment-service
+      dockerfile: ../docker/base.Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - NODE_ENV=development
+      - PAYMENT_GATEWAY_URL=https://example-payment-gateway.com
+    volumes:
+      - ../payment-service:/app
+    networks:
+      - hotel-network
+
+networks:
+  hotel-network:
+    driver: bridge

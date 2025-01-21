@@ -1,0 +1,24 @@
+{
+    "name": "hotel-event-system",
+    "version": "1.0.0",
+    "description": "Sistema gestor de eventos para una cadena de hoteles basado en microservicios",
+    "private": true,
+    "scripts": {
+      "start": "docker-compose up --build",
+      "stop": "docker-compose down",
+      "test": "npm run test:services",
+      "test:services": "concurrently \"cd auth-service && npm test\" \"cd event-service && npm test\" \"cd notification-service && npm test\" \"cd payment-service && npm test\"",
+      "lint": "eslint . --ext .js",
+      "format": "prettier --write ."
+    },
+    "devDependencies": {
+      "concurrently": "^8.0.1",
+      "eslint": "^8.46.0",
+      "prettier": "^3.0.3"
+    },
+    "engines": {
+      "node": ">=18.0.0",
+      "npm": ">=8.0.0"
+    }
+  }
+  
