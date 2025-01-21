@@ -1,33 +1,27 @@
-name: Run Tests
+name: Test Microservices
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        service: [auth-service, event-service, notification-service, payment-service]
-
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Install Dependencies
-      run: |
-        cd ${{ matrix.service }}
-        npm install
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Run Tests
-      run: |
-        cd ${{ matrix.service }}
-        npm test
+      - name: Run Tests
+        run: npm run test

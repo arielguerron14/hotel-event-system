@@ -1,0 +1,9 @@
+aws_region       = "us-east-1"
+cidr_block       = "10.0.0.0/16"
+public_subnets   = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnets  = ["10.0.3.0/24", "10.0.4.0/24"]
+cluster_name     = "hotel-event-cluster"
+desired_count    = 2
+db_name          = "hotel_event_db"
+db_username      = "admin"
+db_password      = "secure_password_here"

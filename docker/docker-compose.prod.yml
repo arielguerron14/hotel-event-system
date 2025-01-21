@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  auth-service:
+    image: your_registry/auth-service:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - JWT_SECRET=your_secret
+      - MONGO_URI=mongodb://mongodb:27017/auth-service
+  event-service:
+    image: your_registry/event-service:latest
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/event-service
+  notification-service:
+    image: your_registry/notification-service:latest
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/notification-service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+volumes:
+  mongo-data:

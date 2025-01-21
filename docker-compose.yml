@@ -1,47 +1,235 @@
 version: "3.8"
-
 services:
   auth-service:
     build:
       context: ./auth-service
+    container_name: auth-service
     ports:
       - "3000:3000"
     environment:
-      - JWT_SECRET=mysecretkey
-      - DATABASE_URL=mysql://admin:securepassword@rds-endpoint:3306/hotel_event_db
-    networks:
-      - hotel-network
+      - JWT_SECRET=your_jwt_secret
+      - MONGO_URI=mongodb://mongo:27017/auth-service
+    depends_on:
+      - mongo
 
   event-service:
     build:
       context: ./event-service
+    container_name: event-service
     ports:
       - "3001:3001"
     environment:
-      - DATABASE_URL=mongodb://mongo:27017/events
-    networks:
-      - hotel-network
+      - MONGO_URI=mongodb://mongo:27017/event-service
+    depends_on:
+      - mongo
 
   notification-service:
     build:
       context: ./notification-service
+    container_name: notification-service
     ports:
       - "3002:3002"
     environment:
-      - EMAIL_SERVICE_API_KEY=example-api-key
-    networks:
-      - hotel-network
+      - EMAIL_USER=your_email@example.com
+      - EMAIL_PASSWORD=your_password
+      - MONGO_URI=mongodb://mongo:27017/notification-service
+    depends_on:
+      - mongo
 
   payment-service:
     build:
       context: ./payment-service
+    container_name: payment-service
     ports:
       - "3003:3003"
     environment:
-      - PAYMENT_GATEWAY_URL=https://example-payment-gateway.com
-    networks:
-      - hotel-network
+      - MONGO_URI=mongodb://mongo:27017/payment-service
+    depends_on:
+      - mongo
 
-networks:
-  hotel-network:
-    driver: bridge
+  user-profile-service:
+    build:
+      context: ./user-profile-service
+    container_name: user-profile-service
+    ports:
+      - "3004:3004"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/user-profile-service
+    depends_on:
+      - mongo
+
+  hotel-service:
+    build:
+      context: ./hotel-service
+    container_name: hotel-service
+    ports:
+      - "3005:3005"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/hotel-service
+    depends_on:
+      - mongo
+
+  room-booking-service:
+    build:
+      context: ./room-booking-service
+    container_name: room-booking-service
+    ports:
+      - "3006:3006"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/room-booking-service
+    depends_on:
+      - mongo
+
+  food-and-beverage-service:
+    build:
+      context: ./food-and-beverage-service
+    container_name: food-and-beverage-service
+    ports:
+      - "3007:3007"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/food-and-beverage-service
+    depends_on:
+      - mongo
+
+  check-in-service:
+    build:
+      context: ./check-in-service
+    container_name: check-in-service
+    ports:
+      - "3008:3008"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/check-in-service
+    depends_on:
+      - mongo
+
+  feedback-service:
+    build:
+      context: ./feedback-service
+    container_name: feedback-service
+    ports:
+      - "3009:3009"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/feedback-service
+    depends_on:
+      - mongo
+
+  analytics-service:
+    build:
+      context: ./analytics-service
+    container_name: analytics-service
+    ports:
+      - "3010:3010"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/analytics-service
+    depends_on:
+      - mongo
+
+  report-service:
+    build:
+      context: ./report-service
+    container_name: report-service
+    ports:
+      - "3011:3011"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/report-service
+    depends_on:
+      - mongo
+
+  discount-service:
+    build:
+      context: ./discount-service
+    container_name: discount-service
+    ports:
+      - "3012:3012"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/discount-service
+    depends_on:
+      - mongo
+
+  invoice-service:
+    build:
+      context: ./invoice-service
+    container_name: invoice-service
+    ports:
+      - "3013:3013"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/invoice-service
+    depends_on:
+      - mongo
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "3014:3014"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/inventory-service
+    depends_on:
+      - mongo
+
+  support-service:
+    build:
+      context: ./support-service
+    container_name: support-service
+    ports:
+      - "3015:3015"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/support-service
+    depends_on:
+      - mongo
+
+  calendar-service:
+    build:
+      context: ./calendar-service
+    container_name: calendar-service
+    ports:
+      - "3016:3016"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/calendar-service
+    depends_on:
+      - mongo
+
+  vendor-management-service:
+    build:
+      context: ./vendor-management-service
+    container_name: vendor-management-service
+    ports:
+      - "3017:3017"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/vendor-management-service
+    depends_on:
+      - mongo
+
+  security-service:
+    build:
+      context: ./security-service
+    container_name: security-service
+    ports:
+      - "3018:3018"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/security-service
+    depends_on:
+      - mongo
+
+  loyalty-program-service:
+    build:
+      context: ./loyalty-program-service
+    container_name: loyalty-program-service
+    ports:
+      - "3019:3019"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/loyalty-program-service
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

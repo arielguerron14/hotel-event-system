@@ -1,1 +1,0 @@
-# hotel-event-system
