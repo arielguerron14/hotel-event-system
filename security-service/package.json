@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "security-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para gestión de accesos y seguridad",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

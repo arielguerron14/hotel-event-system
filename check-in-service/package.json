@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "check-in-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio de registro de check-ins",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

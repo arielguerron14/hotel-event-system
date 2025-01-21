@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "feedback-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para gestionar comentarios y feedback",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -16,3 +16,5 @@
     "jest": "^29.0.0"
   }
 }
+
+

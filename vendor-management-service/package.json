@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "vendor-management-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para gestión de proveedores",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

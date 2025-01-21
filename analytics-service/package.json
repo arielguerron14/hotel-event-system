@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "analytics-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para análisis de datos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

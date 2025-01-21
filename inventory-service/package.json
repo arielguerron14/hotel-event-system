@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "inventory-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para gestionar el inventario de eventos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

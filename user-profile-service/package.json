@@ -1,7 +1,7 @@
 {
-  "name": "user-profile-service",
+  "name": "discount-service",
   "version": "1.0.0",
-  "description": "Microservicio de perfiles de usuario",
+  "description": "Microservicio para gestionar descuentos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -16,4 +16,3 @@
     "jest": "^29.0.0"
   }
 }
-

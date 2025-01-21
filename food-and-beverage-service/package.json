@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "food-and-beverage-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio de alimentos y bebidas",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -16,3 +16,4 @@
     "jest": "^29.0.0"
   }
 }
+

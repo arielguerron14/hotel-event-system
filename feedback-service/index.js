@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const discountRoutes = require('./src/routes/discountRoutes');
+const feedbackRoutes = require('./src/routes/feedbackRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +15,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/discounts', discountRoutes);
+app.use('/api/feedbacks', feedbackRoutes);
 
-const PORT = process.env.PORT || 3012;
+const PORT = process.env.PORT || 3009;
 
 app.listen(PORT, () => {
-  console.log(`Discount Service running on port ${PORT}`);
+  console.log(`Feedback Service running on port ${PORT}`);
 });
+

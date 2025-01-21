@@ -1,7 +1,7 @@
 {
-  "name": "discount-service",
+  "name": "calendar-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar descuentos",
+  "description": "Microservicio para gestión de calendarios",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
