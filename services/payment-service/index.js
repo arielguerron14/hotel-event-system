@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const paymentRoutes = require('./src/routes/paymentRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/payments', paymentRoutes);
+app.get('/health', (req, res) => {
+  res.send('Payment Service is running');
+});
 
-const PORT = process.env.PORT || 3003;
-
+const PORT = process.env.PORT || 3004;
 app.listen(PORT, () => {
   console.log(`Payment Service running on port ${PORT}`);
 });
