@@ -1,9 +1,8 @@
 const express = require('express');
-const { getEventReport, getUserReport } = require('../controllers/reportController');
+const { generateReport } = require('../controllers/reportingController');
 
 const router = express.Router();
 
-router.get('/events', getEventReport);
-router.get('/users', getUserReport);
+router.post('/generate', generateReport);
 
 module.exports = router;

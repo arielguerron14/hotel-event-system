@@ -1,2 +1,9 @@
-// Este microservicio no utiliza un modelo propio, ya que recopila datos de otros microservicios.
-module.exports = {};
+const mongoose = require('mongoose');
+
+const reportSchema = new mongoose.Schema({
+  reportType: { type: String, required: true },
+  data: { type: Object, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+module.exports = mongoose.model('Report', reportSchema);
