@@ -1,34 +1,28 @@
 const Feedback = require('../models/feedbackModel');
 
 const submitFeedback = async (req, res) => {
-  const { userId, eventId, rating, comment } = req.body;
+  const { userId, content, rating } = req.body;
 
-  if (!userId || !eventId || !rating) {
-    return res.status(400).json({ error: 'User ID, Event ID, and rating are required' });
+  if (!userId || !content || !rating) {
+    return res.status(400).json({ message: 'UserId, content, and rating are required' });
   }
 
-  const feedback = new Feedback({ userId, eventId, rating, comment });
-  await feedback.save();
-
-  res.status(201).json({ message: 'Feedback submitted successfully', feedback });
+  try {
+    const feedback = new Feedback({ userId, content, rating });
+    await feedback.save();
+    res.status(201).json(feedback);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to submit feedback', error: err });
+  }
 };
 
 const getFeedback = async (req, res) => {
-  const { eventId } = req.query;
-
-  const feedbacks = eventId
-    ? await Feedback.find({ eventId })
-    : await Feedback.find();
-
-  res.json(feedbacks);
+  try {
+    const feedback = await Feedback.find();
+    res.status(200).json(feedback);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to retrieve feedback', error: err });
+  }
 };
 
-const analyzeFeedback = async (req, res) => {
-  const feedbacks = await Feedback.find();
-  const analysis = require('../utils/analysis').analyze(feedbacks);
-
-  res.json({ message: 'Feedback analysis complete', analysis });
-};
-
-module.exports = { submitFeedback, getFeedback, analyzeFeedback };
-
+module.exports = { submitFeedback, getFeedback };

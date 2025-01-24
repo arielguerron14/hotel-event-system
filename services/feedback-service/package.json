@@ -1,7 +1,7 @@
 {
   "name": "feedback-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestionar comentarios y feedback",
+  "description": "Microservicio para la gestión de comentarios y retroalimentación",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -11,10 +11,5 @@
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
     "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
   }
 }
-
-

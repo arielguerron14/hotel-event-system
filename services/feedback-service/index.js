@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const feedbackRoutes = require('./src/routes/feedbackRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,11 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/feedbacks', feedbackRoutes);
+app.get('/health', (req, res) => {
+  res.send('Feedback Service is running');
+});
 
 const PORT = process.env.PORT || 3009;
-
 app.listen(PORT, () => {
   console.log(`Feedback Service running on port ${PORT}`);
 });
-
