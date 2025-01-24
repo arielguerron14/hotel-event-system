@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const inventoryRoutes = require('./src/routes/inventoryRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/inventory', inventoryRoutes);
+app.get('/health', (req, res) => {
+  res.send('Inventory Service is running');
+});
 
-const PORT = process.env.PORT || 3014;
-
+const PORT = process.env.PORT || 3008;
 app.listen(PORT, () => {
   console.log(`Inventory Service running on port ${PORT}`);
 });
