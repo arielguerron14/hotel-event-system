@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const supportRoutes = require('./src/routes/supportRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/support', supportRoutes);
+app.get('/health', (req, res) => {
+  res.send('Notification Preferences Service is running');
+});
 
-const PORT = process.env.PORT || 3015;
-
+const PORT = process.env.PORT || 3010;
 app.listen(PORT, () => {
-  console.log(`Support Service running on port ${PORT}`);
+  console.log(`Notification Preferences Service running on port ${PORT}`);
 });

@@ -1,7 +1,7 @@
 {
-  "name": "support-service",
+  "name": "notification-preferences-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestión de soporte",
+  "description": "Microservicio para la gestión de preferencias de notificaciones",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,10 +10,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3",
-    "nodemailer": "^6.9.1"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
+    "dotenv": "^16.0.3"
   }
 }
+
