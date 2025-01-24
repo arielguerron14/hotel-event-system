@@ -1,0 +1,31 @@
+{
+  "family": "auth-service",
+  "containerDefinitions": [
+    {
+      "name": "auth-service",
+      "image": "<AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest",
+      "memory": 512,
+      "cpu": 256,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000
+        }
+      ],
+      "environment": [
+        {
+          "name": "MONGO_URI",
+          "value": "mongodb://<MONGO_ENDPOINT>:27017/auth-service"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "your_jwt_secret"
+        }
+      ]
+    }
+  ],
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512"
+}
