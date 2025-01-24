@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const notificationRoutes = require('./src/routes/notificationRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/notifications', notificationRoutes);
+app.get('/health', (req, res) => {
+  res.send('Notification Service is running');
+});
 
 const PORT = process.env.PORT || 3002;
-
 app.listen(PORT, () => {
   console.log(`Notification Service running on port ${PORT}`);
 });

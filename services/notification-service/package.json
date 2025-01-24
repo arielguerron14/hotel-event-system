@@ -1,7 +1,7 @@
 {
   "name": "notification-service",
   "version": "1.0.0",
-  "description": "Microservicio de notificaciones",
+  "description": "Microservicio para gestión de notificaciones",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -11,9 +11,6 @@
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
     "dotenv": "^16.0.3",
-    "nodemailer": "^6.9.1"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
+    "nodemailer": "^6.8.0"
   }
 }
