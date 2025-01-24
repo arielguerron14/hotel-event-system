@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const eventRoutes = require('./src/routes/eventRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/events', eventRoutes);
+app.get('/health', (req, res) => {
+  res.send('Event Service is running');
+});
 
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => {
   console.log(`Event Service running on port ${PORT}`);
 });
