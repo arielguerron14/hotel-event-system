@@ -1,9 +1,8 @@
 const express = require('express');
-const { getAnalytics, addAnalyticsData } = require('../controllers/analyticsController');
+const { getEventStats } = require('../controllers/analyticsController');
 
 const router = express.Router();
 
-router.get('/', getAnalytics);
-router.post('/', addAnalyticsData);
+router.get('/stats', getEventStats);
 
 module.exports = router;

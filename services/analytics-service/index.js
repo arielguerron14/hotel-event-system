@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const analyticsRoutes = require('./src/routes/analyticsRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/analytics', analyticsRoutes);
+app.get('/health', (req, res) => {
+  res.send('Analytics Service is running');
+});
 
-const PORT = process.env.PORT || 3010;
-
+const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => {
   console.log(`Analytics Service running on port ${PORT}`);
 });
