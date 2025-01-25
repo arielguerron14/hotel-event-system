@@ -1,17 +1,12 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const processPayment = async ({ userId, amount, method }) => {
+  console.log(`Processing payment for user ${userId}: $${amount} using ${method}`);
 
-const processPayment = async (amount, currency, source) => {
-  try {
-    const payment = await stripe.charges.create({
-      amount: amount * 100, // Stripe expects the amount in cents
-      currency,
-      source,
-      description: 'Payment for hotel event booking',
-    });
-    return payment;
-  } catch (err) {
-    throw new Error(`Payment processing failed: ${err.message}`);
-  }
+  // Simulación de procesamiento de pago
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ status: 'success' });
+    }, 2000); // Simula un retraso en el procesamiento
+  });
 };
 
 module.exports = { processPayment };
