@@ -1,9 +1,10 @@
 const express = require('express');
-const { submitFeedback, getFeedback } = require('../controllers/feedbackController');
+const { createFeedback, getFeedback, getFeedbackByEvent } = require('../controllers/feedbackController');
 
 const router = express.Router();
 
-router.post('/', submitFeedback);
+router.post('/', createFeedback);
 router.get('/', getFeedback);
+router.get('/event/:eventId', getFeedbackByEvent);
 
 module.exports = router;
