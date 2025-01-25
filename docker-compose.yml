@@ -1,235 +1,212 @@
-version: "3.8"
+version: '3.8'
 services:
   auth-service:
     build:
-      context: ./auth-service
-    container_name: auth-service
+      context: ./services/auth-service
     ports:
       - "3000:3000"
-    environment:
-      - JWT_SECRET=your_jwt_secret
-      - MONGO_URI=mongodb://mongo:27017/auth-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
   event-service:
     build:
-      context: ./event-service
-    container_name: event-service
+      context: ./services/event-service
     ports:
       - "3001:3001"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/event-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
   notification-service:
     build:
-      context: ./notification-service
-    container_name: notification-service
+      context: ./services/notification-service
     ports:
       - "3002:3002"
-    environment:
-      - EMAIL_USER=your_email@example.com
-      - EMAIL_PASSWORD=your_password
-      - MONGO_URI=mongodb://mongo:27017/notification-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
+
+  booking-service:
+    build:
+      context: ./services/booking-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
 
   payment-service:
     build:
-      context: ./payment-service
-    container_name: payment-service
+      context: ./services/payment-service
     ports:
-      - "3003:3003"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/payment-service
+      - "3004:3004"
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
   user-profile-service:
     build:
-      context: ./user-profile-service
-    container_name: user-profile-service
-    ports:
-      - "3004:3004"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/user-profile-service
-    depends_on:
-      - mongo
-
-  hotel-service:
-    build:
-      context: ./hotel-service
-    container_name: hotel-service
+      context: ./services/user-profile-service
     ports:
       - "3005:3005"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/hotel-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  room-booking-service:
+  review-service:
     build:
-      context: ./room-booking-service
-    container_name: room-booking-service
+      context: ./services/review-service
     ports:
       - "3006:3006"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/room-booking-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
-
-  food-and-beverage-service:
-    build:
-      context: ./food-and-beverage-service
-    container_name: food-and-beverage-service
-    ports:
-      - "3007:3007"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/food-and-beverage-service
-    depends_on:
-      - mongo
-
-  check-in-service:
-    build:
-      context: ./check-in-service
-    container_name: check-in-service
-    ports:
-      - "3008:3008"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/check-in-service
-    depends_on:
-      - mongo
-
-  feedback-service:
-    build:
-      context: ./feedback-service
-    container_name: feedback-service
-    ports:
-      - "3009:3009"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/feedback-service
-    depends_on:
-      - mongo
+      - mongodb
 
   analytics-service:
     build:
-      context: ./analytics-service
-    container_name: analytics-service
+      context: ./services/analytics-service
     ports:
-      - "3010:3010"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/analytics-service
+      - "3007:3007"
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
-
-  report-service:
-    build:
-      context: ./report-service
-    container_name: report-service
-    ports:
-      - "3011:3011"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/report-service
-    depends_on:
-      - mongo
-
-  discount-service:
-    build:
-      context: ./discount-service
-    container_name: discount-service
-    ports:
-      - "3012:3012"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/discount-service
-    depends_on:
-      - mongo
-
-  invoice-service:
-    build:
-      context: ./invoice-service
-    container_name: invoice-service
-    ports:
-      - "3013:3013"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/invoice-service
-    depends_on:
-      - mongo
+      - mongodb
 
   inventory-service:
     build:
-      context: ./inventory-service
-    container_name: inventory-service
+      context: ./services/inventory-service
+    ports:
+      - "3008:3008"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  feedback-service:
+    build:
+      context: ./services/feedback-service
+    ports:
+      - "3009:3009"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  notification-preferences-service:
+    build:
+      context: ./services/notification-preferences-service
+    ports:
+      - "3010:3010"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  reporting-service:
+    build:
+      context: ./services/reporting-service
+    ports:
+      - "3011:3011"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  audit-log-service:
+    build:
+      context: ./services/audit-log-service
+    ports:
+      - "3012:3012"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  support-ticket-service:
+    build:
+      context: ./services/support-ticket-service
+    ports:
+      - "3013:3013"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  email-service:
+    build:
+      context: ./services/email-service
     ports:
       - "3014:3014"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/inventory-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  support-service:
+  file-upload-service:
     build:
-      context: ./support-service
-    container_name: support-service
+      context: ./services/file-upload-service
     ports:
       - "3015:3015"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/support-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  calendar-service:
+  notification-queue-service:
     build:
-      context: ./calendar-service
-    container_name: calendar-service
+      context: ./services/notification-queue-service
     ports:
       - "3016:3016"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/calendar-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  vendor-management-service:
+  payment-gateway-service:
     build:
-      context: ./vendor-management-service
-    container_name: vendor-management-service
+      context: ./services/payment-gateway-service
     ports:
       - "3017:3017"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/vendor-management-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  security-service:
+  customer-support-service:
     build:
-      context: ./security-service
-    container_name: security-service
+      context: ./services/customer-support-service
     ports:
       - "3018:3018"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/security-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  loyalty-program-service:
+  scheduler-service:
     build:
-      context: ./loyalty-program-service
-    container_name: loyalty-program-service
+      context: ./services/scheduler-service
     ports:
       - "3019:3019"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/loyalty-program-service
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  mongo:
+  mongodb:
     image: mongo:5.0
-    container_name: mongo
+    container_name: mongodb
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
+      - mongodb_data:/data/db
 
 volumes:
-  mongo-data:
+  mongodb_data:
