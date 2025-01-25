@@ -1,0 +1,24 @@
+{
+    "family": "file-upload-service",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "file-upload-service",
+        "image": "your-dockerhub-username/file-upload-service:latest",
+        "memory": 512,
+        "cpu": 256,
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 3015,
+            "hostPort": 3015
+          }
+        ]
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::your-account-id:role/ecsTaskExecutionRole"
+  }
+  

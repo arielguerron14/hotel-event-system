@@ -1,18 +1,32 @@
-version: "3.8"
+version: '3.8'
 services:
   auth-service:
     build:
-      context: ./services/auth-service
+      context: ../services/auth-service
     ports:
       - "3000:3000"
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/auth-service
-      - JWT_SECRET=development_secret
+    env_file:
+      - ./env/dev.env
     depends_on:
-      - mongo
+      - mongodb
 
-  mongo:
-    image: mongo:6.0
-    container_name: mongo
+  event-service:
+    build:
+      context: ../services/event-service
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb
     ports:
       - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

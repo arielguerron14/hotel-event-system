@@ -1,0 +1,24 @@
+{
+    "family": "review-service",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "review-service",
+        "image": "your-dockerhub-username/review-service:latest",
+        "memory": 512,
+        "cpu": 256,
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 3006,
+            "hostPort": 3006
+          }
+        ]
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::your-account-id:role/ecsTaskExecutionRole"
+  }
+  

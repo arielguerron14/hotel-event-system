@@ -1,24 +1,29 @@
-name: Deploy to AWS
+name: Deploy to AWS ECS
+
 on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Authenticate to AWS
+
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-      - name: Push Docker Images
+
+      - name: Deploy auth-service to ECS
         run: |
-          docker login -u AWS -p $(aws ecr get-login-password --region us-east-1) <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
-          docker-compose -f docker/docker-compose.prod.yml push
-      - name: Update ECS Service
+          aws ecs update-service --cluster hotel-cluster --service auth-service --force-new-deployment
+
+      - name: Deploy event-service to ECS
         run: |
-          aws ecs update-service --cluster hotel-event-cluster --service auth-service --force-new-deployment
+          aws ecs update-service --cluster hotel-cluster --service event-service --force-new-deployment

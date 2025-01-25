@@ -1,4 +1,10 @@
 {
-    "clusterName": "hotel-event-cluster"
-  }
-  
+  "clusterName": "hotel-cluster",
+  "capacityProviders": ["FARGATE"],
+  "settings": [
+    {
+      "name": "containerInsights",
+      "value": "enabled"
+    }
+  ]
+}

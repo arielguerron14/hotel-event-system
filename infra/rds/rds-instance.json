@@ -1,0 +1,12 @@
+{
+    "DBInstanceIdentifier": "hotel-rds-instance",
+    "AllocatedStorage": 20,
+    "DBInstanceClass": "db.t3.micro",
+    "Engine": "mysql",
+    "MasterUsername": "admin",
+    "MasterUserPassword": "securepassword",
+    "VpcSecurityGroupIds": ["sg-id"],
+    "DBSubnetGroupName": "hotel-db-subnet-group",
+    "MultiAZ": false
+  }
+  

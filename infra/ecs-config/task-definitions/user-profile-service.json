@@ -1,0 +1,24 @@
+{
+    "family": "user-profile-service",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+      {
+        "name": "user-profile-service",
+        "image": "your-dockerhub-username/user-profile-service:latest",
+        "memory": 512,
+        "cpu": 256,
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 3005,
+            "hostPort": 3005
+          }
+        ]
+      }
+    ],
+    "requiresCompatibilities": ["FARGATE"],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::your-account-id:role/ecsTaskExecutionRole"
+  }
+  

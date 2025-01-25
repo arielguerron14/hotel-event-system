@@ -1,0 +1,18 @@
+{
+    "GroupName": "hotel-security-group",
+    "Description": "Security group for hotel services",
+    "VpcId": "vpc-id",
+    "IpPermissions": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 3000,
+        "ToPort": 3019,
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    ]
+  }
+  
