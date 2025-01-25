@@ -1,24 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const reviewRoutes = require('./src/routes/reviewRoutes');
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use('/reviews', reviewRoutes);
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Database connection error:', err);
-});
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Review Service connected to MongoDB'))
+  .catch((err) => console.error('Database connection error:', err));
 
-app.get('/health', (req, res) => {
-  res.send('Review Service is running');
-});
-
-const PORT = process.env.PORT || 3006;
+const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => {
   console.log(`Review Service running on port ${PORT}`);
 });
