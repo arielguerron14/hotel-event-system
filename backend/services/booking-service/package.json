@@ -1,16 +1,15 @@
 {
   "name": "booking-service",
   "version": "1.0.0",
-  "description": "Microservicio para la gestión de reservas",
+  "description": "Service for managing bookings",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3"
+    "mongoose": "^6.10.0"
   }
 }
-
