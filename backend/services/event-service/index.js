@@ -1,24 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const eventRoutes = require('./src/routes/eventRoutes');
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use('/events', eventRoutes);
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Database connection error:', err);
-});
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Event Service connected to MongoDB'))
+  .catch((err) => console.error('Database connection error:', err));
 
-app.get('/health', (req, res) => {
-  res.send('Event Service is running');
-});
-
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Event Service running on port ${PORT}`);
 });
