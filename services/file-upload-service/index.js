@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const checkInRoutes = require('./src/routes/checkInRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/check-ins', checkInRoutes);
+app.get('/health', (req, res) => {
+  res.send('File Upload Service is running');
+});
 
-const PORT = process.env.PORT || 3008;
-
+const PORT = process.env.PORT || 3015;
 app.listen(PORT, () => {
-  console.log(`Check-in Service running on port ${PORT}`);
+  console.log(`File Upload Service running on port ${PORT}`);
 });

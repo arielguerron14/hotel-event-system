@@ -1,7 +1,7 @@
 {
-  "name": "check-in-service",
+  "name": "file-upload-service",
   "version": "1.0.0",
-  "description": "Microservicio de registro de check-ins",
+  "description": "Microservicio para la gestión de subida de archivos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,9 +10,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
+    "dotenv": "^16.0.3",
+    "multer": "^1.4.5"
   }
 }
