@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const hotelRoutes = require('./src/routes/hotelRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/hotels', hotelRoutes);
+app.get('/health', (req, res) => {
+  res.send('Customer Support Service is running');
+});
 
-const PORT = process.env.PORT || 3005;
-
+const PORT = process.env.PORT || 3018;
 app.listen(PORT, () => {
-  console.log(`Hotel Service running on port ${PORT}`);
+  console.log(`Customer Support Service running on port ${PORT}`);
 });
