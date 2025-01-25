@@ -1,29 +1,26 @@
 {
-  "family": "email-service",
+  "family": "billing-service",
   "containerDefinitions": [
     {
-      "name": "email-service",
-      "image": "<ECR_IMAGE_URL>/email-service:latest",
+      "name": "billing-service",
+      "image": "<ECR_IMAGE_URL>/billing-service:latest",
       "memory": 512,
       "cpu": 256,
       "essential": true,
       "portMappings": [
         {
-          "containerPort": 3012,
-          "hostPort": 3012
+          "containerPort": 3015,
+          "hostPort": 3015
         }
       ],
       "environment": [
         { "name": "NODE_ENV", "value": "production" },
-        { "name": "SMTP_HOST", "value": "smtp.mailtrap.io" },
-        { "name": "SMTP_PORT", "value": "587" },
-        { "name": "SMTP_USER", "value": "your_smtp_user" },
-        { "name": "SMTP_PASS", "value": "your_smtp_password" }
+        { "name": "MONGO_URI", "value": "mongodb://mongo:27017/billing-db" }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/email-service",
+          "awslogs-group": "/ecs/billing-service",
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }

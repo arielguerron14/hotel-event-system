@@ -1,192 +1,234 @@
-version: '3.8'
+version: "3.8"
+
 services:
+  # MongoDB
+  mongo:
+    image: mongo:5.0
+    container_name: prod-mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend-network
+
+  # Redis
+  redis:
+    image: redis:6.2
+    container_name: prod-redis
+    networks:
+      - backend-network
+
+  # Microservicios
+  analytics-service:
+    build:
+      context: ./services/analytics-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/analytics-db
+
   auth-service:
-    image: your-dockerhub-username/auth-service:latest
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./env/prod.env
+    build:
+      context: ./services/auth-service
     depends_on:
-      - mongodb
+      - mongo
+      - redis
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth-db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=prodsecret
 
-  event-service:
-    image: your-dockerhub-username/event-service:latest
-    ports:
-      - "3001:3001"
-    env_file:
-      - ./env/prod.env
+  billing-service:
+    build:
+      context: ./services/billing-service
     depends_on:
-      - mongodb
-
-  notification-service:
-    image: your-dockerhub-username/notification-service:latest
-    ports:
-      - "3002:3002"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/billing-db
 
   booking-service:
-    image: your-dockerhub-username/booking-service:latest
-    ports:
-      - "3003:3003"
-    env_file:
-      - ./env/prod.env
+    build:
+      context: ./services/booking-service
     depends_on:
-      - mongodb
-
-  payment-service:
-    image: your-dockerhub-username/payment-service:latest
-    ports:
-      - "3004:3004"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  user-profile-service:
-    image: your-dockerhub-username/user-profile-service:latest
-    ports:
-      - "3005:3005"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  review-service:
-    image: your-dockerhub-username/review-service:latest
-    ports:
-      - "3006:3006"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  analytics-service:
-    image: your-dockerhub-username/analytics-service:latest
-    ports:
-      - "3007:3007"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  inventory-service:
-    image: your-dockerhub-username/inventory-service:latest
-    ports:
-      - "3008:3008"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  feedback-service:
-    image: your-dockerhub-username/feedback-service:latest
-    ports:
-      - "3009:3009"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  notification-preferences-service:
-    image: your-dockerhub-username/notification-preferences-service:latest
-    ports:
-      - "3010:3010"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  reporting-service:
-    image: your-dockerhub-username/reporting-service:latest
-    ports:
-      - "3011:3011"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  audit-log-service:
-    image: your-dockerhub-username/audit-log-service:latest
-    ports:
-      - "3012:3012"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
-
-  support-ticket-service:
-    image: your-dockerhub-username/support-ticket-service:latest
-    ports:
-      - "3013:3013"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/booking-db
 
   email-service:
-    image: your-dockerhub-username/email-service:latest
-    ports:
-      - "3014:3014"
-    env_file:
-      - ./env/prod.env
-    depends_on:
-      - mongodb
+    build:
+      context: ./services/email-service
+    networks:
+      - backend-network
+    environment:
+      - SMTP_HOST=smtp.mailtrap.io
+      - SMTP_PORT=587
+      - SMTP_USER=your_user
+      - SMTP_PASS=your_password
 
-  file-upload-service:
-    image: your-dockerhub-username/file-upload-service:latest
-    ports:
-      - "3015:3015"
-    env_file:
-      - ./env/prod.env
+  event-service:
+    build:
+      context: ./services/event-service
     depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/event-db
 
-  notification-queue-service:
-    image: your-dockerhub-username/notification-queue-service:latest
-    ports:
-      - "3016:3016"
-    env_file:
-      - ./env/prod.env
+  feedback-service:
+    build:
+      context: ./services/feedback-service
     depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/feedback-db
+
+  file-storage-service:
+    build:
+      context: ./services/file-storage-service
+    volumes:
+      - file-uploads:/app/uploads
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/file-storage-db
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/inventory-db
+
+  loyalty-service:
+    build:
+      context: ./services/loyalty-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/loyalty-db
+
+  notification-preferences-service:
+    build:
+      context: ./services/notification-preferences-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/notification-preferences-db
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/notification-db
 
   payment-gateway-service:
-    image: your-dockerhub-username/payment-gateway-service:latest
-    ports:
-      - "3017:3017"
-    env_file:
-      - ./env/prod.env
+    build:
+      context: ./services/payment-gateway-service
     depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/payment-gateway-db
 
-  customer-support-service:
-    image: your-dockerhub-username/customer-support-service:latest
-    ports:
-      - "3018:3018"
-    env_file:
-      - ./env/prod.env
+  payment-service:
+    build:
+      context: ./services/payment-service
     depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/payment-db
+
+  reporting-service:
+    build:
+      context: ./services/reporting-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/reporting-db
+
+  review-service:
+    build:
+      context: ./services/review-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/review-db
+
+  room-service:
+    build:
+      context: ./services/room-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/room-db
 
   scheduler-service:
-    image: your-dockerhub-username/scheduler-service:latest
-    ports:
-      - "3019:3019"
-    env_file:
-      - ./env/prod.env
+    build:
+      context: ./services/scheduler-service
     depends_on:
-      - mongodb
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/scheduler-db
 
-  mongodb:
-    image: mongo:5.0
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
+  support-service:
+    build:
+      context: ./services/support-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/support-db
+
+  user-profile-service:
+    build:
+      context: ./services/user-profile-service
+    depends_on:
+      - mongo
+    networks:
+      - backend-network
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/user-profile-db
 
 volumes:
-  mongodb_data:
+  mongo-data:
+  file-uploads:
+
+networks:
+  backend-network:
+    driver: bridge
