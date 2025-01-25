@@ -1,10 +1,9 @@
 const mongoose = require('mongoose');
 
 const analyticsSchema = new mongoose.Schema({
-  eventId: { type: String, required: true },
-  views: { type: Number, default: 0 },
-  bookings: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now },
+  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  action: { type: String, required: true },
+  timestamp: { type: Date, required: true },
 });
 
 module.exports = mongoose.model('Analytics', analyticsSchema);

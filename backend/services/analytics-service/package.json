@@ -1,15 +1,15 @@
 {
   "name": "analytics-service",
   "version": "1.0.0",
-  "description": "Microservicio para análisis de datos",
+  "description": "Service for collecting and analyzing system data",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3"
+    "mongoose": "^6.10.0"
   }
 }
