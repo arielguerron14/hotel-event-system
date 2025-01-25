@@ -1,15 +1,16 @@
 const Event = require('../models/eventModel');
 
 const createEvent = async (req, res) => {
-  const { name, date, location } = req.body;
-  if (!name || !date || !location) {
+  const { title, description, date, location } = req.body;
+
+  if (!title || !date || !location) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
-    const event = new Event({ name, date, location });
+    const event = new Event({ title, description, date, location });
     await event.save();
-    res.status(201).json(event);
+    res.status(201).json({ message: 'Event created successfully', event });
   } catch (error) {
     res.status(500).json({ message: 'Error creating event', error });
   }
@@ -33,7 +34,7 @@ const updateEvent = async (req, res) => {
     if (!event) {
       return res.status(404).json({ message: 'Event not found' });
     }
-    res.status(200).json(event);
+    res.status(200).json({ message: 'Event updated successfully', event });
   } catch (error) {
     res.status(500).json({ message: 'Error updating event', error });
   }

@@ -17,7 +17,7 @@ mongoose
   .then(() => console.log('Event Service connected to MongoDB'))
   .catch((err) => console.error('Database connection error:', err));
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3022;
 app.listen(PORT, () => {
   console.log(`Event Service running on port ${PORT}`);
 });
