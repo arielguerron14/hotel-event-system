@@ -1,15 +1,16 @@
 {
-  "name": "audit-log-service",
+  "name": "file-storage-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestión de logs de auditoría",
+  "description": "Service for managing file storage",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3"
+    "multer": "^1.4.5",
+    "mongoose": "^6.10.0"
   }
 }
