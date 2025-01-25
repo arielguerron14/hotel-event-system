@@ -1,16 +1,16 @@
 {
   "name": "scheduler-service",
   "version": "1.0.0",
-  "description": "Microservicio para la gestión de tareas programadas",
+  "description": "Service for scheduling tasks",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
   },
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3",
-    "node-schedule": "^2.1.0"
+    "node-cron": "^3.0.0"
   }
 }
