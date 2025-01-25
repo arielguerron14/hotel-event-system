@@ -1,7 +1,7 @@
 {
-  "name": "loyalty-program-service",
+  "name": "email-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestión de programas de fidelidad",
+  "description": "Microservicio para la gestión de correos electrónicos",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,9 +10,7 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.10.0",
-    "dotenv": "^16.0.3"
-  },
-  "devDependencies": {
-    "jest": "^29.0.0"
+    "dotenv": "^16.0.3",
+    "nodemailer": "^6.8.0"
   }
 }
