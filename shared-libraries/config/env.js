@@ -1,11 +1,11 @@
 require('dotenv').config();
 
-const env = {
-  port: process.env.PORT || 3000,
-  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017',
-  jwtSecret: process.env.JWT_SECRET || 'default_secret',
+const config = {
+  environment: process.env.NODE_ENV || 'development',
+  mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/hotel-system',
+  jwtSecret: process.env.JWT_SECRET || 'defaultSecret',
   emailUser: process.env.EMAIL_USER || '',
-  emailPassword: process.env.EMAIL_PASSWORD || '',
+  emailPass: process.env.EMAIL_PASS || '',
 };
 
-module.exports = env;
+module.exports = config;
