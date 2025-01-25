@@ -1,5 +1,5 @@
-const calculateStock = (items) => {
-  return items.reduce((total, item) => total + item.quantity, 0);
+const calculateTotalItems = (inventory) => {
+  return inventory.reduce((total, item) => total + item.quantity, 0);
 };
 
-module.exports = { calculateStock };
+module.exports = { calculateTotalItems };

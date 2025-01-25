@@ -1,28 +1,51 @@
 const Inventory = require('../models/inventoryModel');
 
 const addItem = async (req, res) => {
-  const { itemName, quantity, location } = req.body;
+  const { name, quantity, description } = req.body;
 
-  if (!itemName || !quantity || !location) {
-    return res.status(400).json({ message: 'All fields are required' });
+  if (!name || !quantity) {
+    return res.status(400).json({ message: 'Name and quantity are required' });
   }
 
   try {
-    const item = new Inventory({ itemName, quantity, location });
+    const item = new Inventory({ name, quantity, description });
     await item.save();
-    res.status(201).json(item);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to add item', error: err });
+    res.status(201).json({ message: 'Item added to inventory', item });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding item to inventory', error });
   }
 };
 
-const getItems = async (req, res) => {
+const getInventory = async (req, res) => {
   try {
-    const items = await Inventory.find();
-    res.status(200).json(items);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to retrieve items', error: err });
+    const inventory = await Inventory.find();
+    res.status(200).json(inventory);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching inventory', error });
   }
 };
 
-module.exports = { addItem, getItems };
+const updateItemQuantity = async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+
+  if (quantity == null) {
+    return res.status(400).json({ message: 'Quantity is required' });
+  }
+
+  try {
+    const item = await Inventory.findByIdAndUpdate(
+      id,
+      { quantity },
+      { new: true }
+    );
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+    res.status(200).json({ message: 'Item quantity updated', item });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating item quantity', error });
+  }
+};
+
+module.exports = { addItem, getInventory, updateItemQuantity };
