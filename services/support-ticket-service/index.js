@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const vendorRoutes = require('./src/routes/vendorRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -15,10 +14,11 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('Database connection error:', err);
 });
 
-app.use('/api/vendors', vendorRoutes);
+app.get('/health', (req, res) => {
+  res.send('Support Ticket Service is running');
+});
 
-const PORT = process.env.PORT || 3017;
-
+const PORT = process.env.PORT || 3013;
 app.listen(PORT, () => {
-  console.log(`Vendor Management Service running on port ${PORT}`);
+  console.log(`Support Ticket Service running on port ${PORT}`);
 });
