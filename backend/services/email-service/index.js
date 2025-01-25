@@ -1,24 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const dotenv = require('dotenv');
+const emailRoutes = require('./src/routes/emailRoutes');
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
+app.use('/emails', emailRoutes);
 
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Database connection error:', err);
-});
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Email Service connected to MongoDB'))
+  .catch((err) => console.error('Database connection error:', err));
 
-app.get('/health', (req, res) => {
-  res.send('Email Service is running');
-});
-
-const PORT = process.env.PORT || 3014;
+const PORT = process.env.PORT || 3012;
 app.listen(PORT, () => {
   console.log(`Email Service running on port ${PORT}`);
 });

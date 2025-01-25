@@ -1,37 +1,32 @@
-const nodemailer = require('nodemailer');
-const Email = require('../models/emailModel');
+const EmailLog = require('../models/emailLogModel');
+const { sendEmail } = require('../utils/emailHelper');
 
-const sendEmail = async (req, res) => {
+const sendEmailNotification = async (req, res) => {
   const { to, subject, message } = req.body;
 
   if (!to || !subject || !message) {
-    return res.status(400).json({ message: 'To, subject, and message are required' });
+    return res.status(400).json({ message: 'Missing required fields' });
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to,
-    subject,
-    text: message,
-  };
-
   try {
-    const emailResponse = await transporter.sendMail(mailOptions);
-    const emailLog = new Email({ to, subject, message });
+    const emailResult = await sendEmail({ to, subject, message });
+
+    const emailLog = new EmailLog({
+      to,
+      subject,
+      message,
+      status: emailResult.success ? 'sent' : 'failed',
+    });
+
     await emailLog.save();
 
-    res.status(200).json({ message: 'Email sent successfully', response: emailResponse });
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to send email', error: err });
+    res.status(201).json({
+      message: 'Email processed',
+      emailLog,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending email', error });
   }
 };
 
-module.exports = { sendEmail };
+module.exports = { sendEmailNotification };
