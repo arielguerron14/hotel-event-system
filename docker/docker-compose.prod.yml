@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   auth-service:
-    image: auth-service:latest
+    image: your-dockerhub-username/auth-service:latest
     ports:
       - "3000:3000"
     env_file:
@@ -10,9 +10,171 @@ services:
       - mongodb
 
   event-service:
-    image: event-service:latest
+    image: your-dockerhub-username/event-service:latest
     ports:
       - "3001:3001"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  notification-service:
+    image: your-dockerhub-username/notification-service:latest
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  booking-service:
+    image: your-dockerhub-username/booking-service:latest
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  payment-service:
+    image: your-dockerhub-username/payment-service:latest
+    ports:
+      - "3004:3004"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  user-profile-service:
+    image: your-dockerhub-username/user-profile-service:latest
+    ports:
+      - "3005:3005"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  review-service:
+    image: your-dockerhub-username/review-service:latest
+    ports:
+      - "3006:3006"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  analytics-service:
+    image: your-dockerhub-username/analytics-service:latest
+    ports:
+      - "3007:3007"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  inventory-service:
+    image: your-dockerhub-username/inventory-service:latest
+    ports:
+      - "3008:3008"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  feedback-service:
+    image: your-dockerhub-username/feedback-service:latest
+    ports:
+      - "3009:3009"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  notification-preferences-service:
+    image: your-dockerhub-username/notification-preferences-service:latest
+    ports:
+      - "3010:3010"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  reporting-service:
+    image: your-dockerhub-username/reporting-service:latest
+    ports:
+      - "3011:3011"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  audit-log-service:
+    image: your-dockerhub-username/audit-log-service:latest
+    ports:
+      - "3012:3012"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  support-ticket-service:
+    image: your-dockerhub-username/support-ticket-service:latest
+    ports:
+      - "3013:3013"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  email-service:
+    image: your-dockerhub-username/email-service:latest
+    ports:
+      - "3014:3014"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  file-upload-service:
+    image: your-dockerhub-username/file-upload-service:latest
+    ports:
+      - "3015:3015"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  notification-queue-service:
+    image: your-dockerhub-username/notification-queue-service:latest
+    ports:
+      - "3016:3016"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  payment-gateway-service:
+    image: your-dockerhub-username/payment-gateway-service:latest
+    ports:
+      - "3017:3017"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  customer-support-service:
+    image: your-dockerhub-username/customer-support-service:latest
+    ports:
+      - "3018:3018"
+    env_file:
+      - ./env/prod.env
+    depends_on:
+      - mongodb
+
+  scheduler-service:
+    image: your-dockerhub-username/scheduler-service:latest
+    ports:
+      - "3019:3019"
     env_file:
       - ./env/prod.env
     depends_on:

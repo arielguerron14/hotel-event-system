@@ -22,12 +22,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push auth-service image
+      - name: Build and push Docker images
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/auth-service:latest ./services/auth-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
-
-      - name: Build and push event-service image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/event-service:latest ./services/event-service
-          docker push ${{ secrets.DOCKER_USERNAME }}/event-service:latest
+          for service in auth-service event-service notification-service booking-service payment-service \
+                        user-profile-service review-service analytics-service inventory-service feedback-service \
+                        notification-preferences-service reporting-service audit-log-service support-ticket-service \
+                        email-service file-upload-service notification-queue-service payment-gateway-service \
+                        customer-support-service scheduler-service; do
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:latest ./services/$service
+            docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
+          done

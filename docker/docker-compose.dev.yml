@@ -20,6 +20,186 @@ services:
     depends_on:
       - mongodb
 
+  notification-service:
+    build:
+      context: ../services/notification-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  booking-service:
+    build:
+      context: ../services/booking-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  payment-service:
+    build:
+      context: ../services/payment-service
+    ports:
+      - "3004:3004"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  user-profile-service:
+    build:
+      context: ../services/user-profile-service
+    ports:
+      - "3005:3005"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  review-service:
+    build:
+      context: ../services/review-service
+    ports:
+      - "3006:3006"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  analytics-service:
+    build:
+      context: ../services/analytics-service
+    ports:
+      - "3007:3007"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  inventory-service:
+    build:
+      context: ../services/inventory-service
+    ports:
+      - "3008:3008"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  feedback-service:
+    build:
+      context: ../services/feedback-service
+    ports:
+      - "3009:3009"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  notification-preferences-service:
+    build:
+      context: ../services/notification-preferences-service
+    ports:
+      - "3010:3010"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  reporting-service:
+    build:
+      context: ../services/reporting-service
+    ports:
+      - "3011:3011"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  audit-log-service:
+    build:
+      context: ../services/audit-log-service
+    ports:
+      - "3012:3012"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  support-ticket-service:
+    build:
+      context: ../services/support-ticket-service
+    ports:
+      - "3013:3013"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  email-service:
+    build:
+      context: ../services/email-service
+    ports:
+      - "3014:3014"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  file-upload-service:
+    build:
+      context: ../services/file-upload-service
+    ports:
+      - "3015:3015"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  notification-queue-service:
+    build:
+      context: ../services/notification-queue-service
+    ports:
+      - "3016:3016"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  payment-gateway-service:
+    build:
+      context: ../services/payment-gateway-service
+    ports:
+      - "3017:3017"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  customer-support-service:
+    build:
+      context: ../services/customer-support-service
+    ports:
+      - "3018:3018"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
+  scheduler-service:
+    build:
+      context: ../services/scheduler-service
+    ports:
+      - "3019:3019"
+    env_file:
+      - ./env/dev.env
+    depends_on:
+      - mongodb
+
   mongodb:
     image: mongo:5.0
     container_name: mongodb

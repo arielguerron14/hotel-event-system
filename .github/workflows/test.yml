@@ -1,4 +1,4 @@
-name: Test Services
+name: Test Microservices
 
 on:
   push:
@@ -17,6 +17,24 @@ jobs:
         service:
           - auth-service
           - event-service
+          - notification-service
+          - booking-service
+          - payment-service
+          - user-profile-service
+          - review-service
+          - analytics-service
+          - inventory-service
+          - feedback-service
+          - notification-preferences-service
+          - reporting-service
+          - audit-log-service
+          - support-ticket-service
+          - email-service
+          - file-upload-service
+          - notification-queue-service
+          - payment-gateway-service
+          - customer-support-service
+          - scheduler-service
 
     steps:
       - name: Checkout repository

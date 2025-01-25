@@ -20,10 +20,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Deploy auth-service to ECS
+      - name: Deploy services to ECS
         run: |
-          aws ecs update-service --cluster hotel-cluster --service auth-service --force-new-deployment
-
-      - name: Deploy event-service to ECS
-        run: |
-          aws ecs update-service --cluster hotel-cluster --service event-service --force-new-deployment
+          for service in auth-service event-service notification-service booking-service payment-service \
+                        user-profile-service review-service analytics-service inventory-service feedback-service \
+                        notification-preferences-service reporting-service audit-log-service support-ticket-service \
+                        email-service file-upload-service notification-queue-service payment-gateway-service \
+                        customer-support-service scheduler-service; do
+            aws ecs update-service --cluster hotel-cluster --service $service --force-new-deployment
+          done
