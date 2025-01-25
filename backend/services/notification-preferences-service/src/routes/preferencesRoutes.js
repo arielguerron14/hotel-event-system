@@ -1,9 +1,9 @@
 const express = require('express');
-const { updatePreferences, getPreferences } = require('../controllers/preferencesController');
+const { setPreferences, getPreferences } = require('../controllers/preferencesController');
 
 const router = express.Router();
 
-router.put('/', updatePreferences);
+router.put('/', setPreferences);
 router.get('/:userId', getPreferences);
 
 module.exports = router;
