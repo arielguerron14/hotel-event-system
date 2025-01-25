@@ -1,27 +1,18 @@
+const jwtHelper = require('../utils/jwtHelper');
+const passwordHelper = require('../utils/passwordHelper');
 const User = require('../models/userModel');
-const jwt = require('../utils/jwtHelper');
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
+  if (!email || !password) return res.status(400).json({ message: 'Missing credentials' });
+
   const user = await User.findOne({ email });
-  if (!user || !(await user.comparePassword(password))) {
+  if (!user || !(await passwordHelper.verifyPassword(password, user.password))) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
-  const token = jwt.generateToken({ id: user._id });
+
+  const token = jwtHelper.generateToken(user._id);
   res.status(200).json({ token });
 };
 
-const register = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required' });
-  }
-  const newUser = new User({ email, password });
-  await newUser.save();
-  res.status(201).json({ message: 'User registered successfully' });
-};
-
-module.exports = { login, register };
+module.exports = { login };
