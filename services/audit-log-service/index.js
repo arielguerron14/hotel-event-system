@@ -15,10 +15,10 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 app.get('/health', (req, res) => {
-  res.send('Notification Service is running');
+  res.send('Audit Log Service is running');
 });
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3012;
 app.listen(PORT, () => {
-  console.log(`Notification Service running on port ${PORT}`);
+  console.log(`Audit Log Service running on port ${PORT}`);
 });
