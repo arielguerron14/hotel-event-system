@@ -1,39 +1,28 @@
-const Feedback = require('../models/feedbackModel');
-
-const createFeedback = async (req, res) => {
-  const { userId, eventId, comment, rating } = req.body;
-
-  if (!userId || !eventId || !comment) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const feedback = new Feedback({ userId, eventId, comment, rating });
-    await feedback.save();
-    res.status(201).json({ message: 'Feedback created successfully', feedback });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating feedback', error });
-  }
-};
+const { getAllFeedback, createFeedback } = require('../models/feedbackModel');
 
 const getFeedback = async (req, res) => {
   try {
-    const feedback = await Feedback.find();
+    const feedback = await getAllFeedback();
     res.status(200).json(feedback);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching feedback', error });
+    res.status(500).json({ message: 'Error fetching feedback', error: error.message });
   }
 };
 
-const getFeedbackByEvent = async (req, res) => {
-  const { eventId } = req.params;
+const submitFeedback = async (req, res) => {
+  const feedbackData = req.body;
+
+  if (!feedbackData || !feedbackData.id || !feedbackData.user_id || !feedbackData.comments || !feedbackData.rating) {
+    return res.status(400).json({ message: 'Invalid feedback data' });
+  }
 
   try {
-    const feedback = await Feedback.find({ eventId });
-    res.status(200).json(feedback);
+    await createFeedback(feedbackData);
+    res.status(201).json({ message: 'Feedback submitted successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching feedback for event', error });
+    res.status(500).json({ message: 'Error submitting feedback', error: error.message });
   }
 };
 
-module.exports = { createFeedback, getFeedback, getFeedbackByEvent };
+module.exports = { getFeedback, submitFeedback };
+

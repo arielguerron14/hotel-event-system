@@ -1,34 +1,29 @@
-const Notification = require('../models/notificationModel');
-const { sendEmail } = require('../utils/notificationHelper');
-
-const createNotification = async (req, res) => {
-  const { email, message, type } = req.body;
-  if (!email || !message || !type) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const notification = new Notification({ email, message, type });
-    await notification.save();
-
-    if (type === 'email') {
-      await sendEmail(email, message);
-    }
-
-    res.status(201).json({ message: 'Notification created and sent', notification });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating notification', error });
-  }
-};
+const { getAllNotifications, createNotification } = require('../models/notificationModel');
 
 const getNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find();
+    const notifications = await getAllNotifications();
     res.status(200).json(notifications);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching notifications', error });
+    res.status(500).json({ message: 'Error fetching notifications', error: error.message });
   }
 };
 
-module.exports = { createNotification, getNotifications };
+const sendNotification = async (req, res) => {
+  const notificationData = req.body;
+
+  if (!notificationData || !notificationData.id || !notificationData.user_id || !notificationData.message || !notificationData.status) {
+    return res.status(400).json({ message: 'Invalid notification data' });
+  }
+
+  try {
+    await createNotification(notificationData);
+    res.status(201).json({ message: 'Notification sent successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sending notification', error: error.message });
+  }
+};
+
+module.exports = { getNotifications, sendNotification };
+
 

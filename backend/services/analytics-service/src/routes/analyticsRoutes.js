@@ -1,9 +1,9 @@
 const express = require('express');
-const { createAnalyticsRecord, getAnalyticsData } = require('../controllers/analyticsController');
+const { getAnalytics, saveAnalytics } = require('../controllers/analyticsController');
 
 const router = express.Router();
 
-router.post('/', createAnalyticsRecord);
-router.get('/', getAnalyticsData);
+router.get('/', getAnalytics);
+router.post('/', saveAnalytics);
 
 module.exports = router;

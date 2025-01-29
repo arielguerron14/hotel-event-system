@@ -1,28 +1,28 @@
-const Task = require('../models/taskModel');
+const { getAllSchedules, createSchedule } = require('../models/schedulerModel');
 
-const createTask = async (req, res) => {
-  const { name, schedule, action } = req.body;
-
-  if (!name || !schedule || !action) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
+const getSchedules = async (req, res) => {
   try {
-    const task = new Task({ name, schedule, action });
-    await task.save();
-    res.status(201).json({ message: 'Task scheduled successfully', task });
+    const schedules = await getAllSchedules();
+    res.status(200).json(schedules);
   } catch (error) {
-    res.status(500).json({ message: 'Error scheduling task', error });
+    res.status(500).json({ message: 'Error fetching schedules', error: error.message });
   }
 };
 
-const getTasks = async (req, res) => {
+const addSchedule = async (req, res) => {
+  const scheduleData = req.body;
+
+  if (!scheduleData || !scheduleData.id || !scheduleData.task_name || !scheduleData.schedule_time || !scheduleData.status) {
+    return res.status(400).json({ message: 'Invalid schedule data' });
+  }
+
   try {
-    const tasks = await Task.find();
-    res.status(200).json(tasks);
+    await createSchedule(scheduleData);
+    res.status(201).json({ message: 'Schedule added successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching tasks', error });
+    res.status(500).json({ message: 'Error adding schedule', error: error.message });
   }
 };
 
-module.exports = { createTask, getTasks };
+module.exports = { getSchedules, addSchedule };
+

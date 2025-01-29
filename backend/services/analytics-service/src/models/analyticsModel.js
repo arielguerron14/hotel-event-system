@@ -1,9 +1,19 @@
-const mongoose = require('mongoose');
+const connectToMySQL = require('../utils/mysqlConfig');
 
-const analyticsSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  action: { type: String, required: true },
-  timestamp: { type: Date, required: true },
-});
+const getAnalyticsData = async () => {
+  const connection = await connectToMySQL();
+  const [rows] = await connection.execute('SELECT * FROM analytics');
+  return rows;
+};
 
-module.exports = mongoose.model('Analytics', analyticsSchema);
+const saveAnalyticsData = async (data) => {
+  const connection = await connectToMySQL();
+  await connection.execute('INSERT INTO analytics (id, metric, value) VALUES (?, ?, ?)', [
+    data.id,
+    data.metric,
+    data.value,
+  ]);
+};
+
+module.exports = { getAnalyticsData, saveAnalyticsData };
+

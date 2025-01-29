@@ -1,7 +1,7 @@
 {
   "name": "payment-gateway-service",
   "version": "1.0.0",
-  "description": "Service for payment gateway integration",
+  "description": "Service for processing payments using MySQL",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -10,6 +10,6 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mongoose": "^6.10.0"
+    "mysql2": "^3.1.2"
   }
 }

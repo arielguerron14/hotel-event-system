@@ -1,10 +1,17 @@
-const mongoose = require('mongoose');
+const connectToMySQL = require('../utils/mysqlConfig');
 
-const taskSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  schedule: { type: String, required: true }, // Cron expression
-  action: { type: String, required: true }, // Acción a realizar
-  createdAt: { type: Date, default: Date.now },
-});
+const getAllSchedules = async () => {
+  const connection = await connectToMySQL();
+  const [rows] = await connection.execute('SELECT * FROM schedules');
+  return rows;
+};
 
-module.exports = mongoose.model('Task', taskSchema);
+const createSchedule = async (data) => {
+  const connection = await connectToMySQL();
+  await connection.execute(
+    'INSERT INTO schedules (id, task_name, schedule_time, status, created_at) VALUES (?, ?, ?, ?, ?)',
+    [data.id, data.task_name, data.schedule_time, data.status, new Date()]
+  );
+};
+
+module.exports = { getAllSchedules, createSchedule };

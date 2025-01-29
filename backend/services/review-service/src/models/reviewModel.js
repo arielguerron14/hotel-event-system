@@ -1,11 +1,17 @@
-const mongoose = require('mongoose');
+const connectToMySQL = require('../utils/mysqlConfig');
 
-const reviewSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  eventId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Event' },
-  rating: { type: Number, required: true, min: 1, max: 5 },
-  comment: { type: String, default: '' },
-  createdAt: { type: Date, default: Date.now },
-});
+const getAllReviews = async () => {
+  const connection = await connectToMySQL();
+  const [rows] = await connection.execute('SELECT * FROM reviews');
+  return rows;
+};
 
-module.exports = mongoose.model('Review', reviewSchema);
+const createReview = async (data) => {
+  const connection = await connectToMySQL();
+  await connection.execute(
+    'INSERT INTO reviews (id, user_id, review_text, rating, created_at) VALUES (?, ?, ?, ?, ?)',
+    [data.id, data.user_id, data.review_text, data.rating, new Date()]
+  );
+};
+
+module.exports = { getAllReviews, createReview };

@@ -1,30 +1,27 @@
-const Analytics = require('../models/analyticsModel');
-const { calculateMetrics } = require('../utils/analyticsHelper');
+const { getAnalyticsData, saveAnalyticsData } = require('../models/analyticsModel');
 
-const createAnalyticsRecord = async (req, res) => {
-  const { userId, action, timestamp } = req.body;
-
-  if (!userId || !action || !timestamp) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
+const getAnalytics = async (req, res) => {
   try {
-    const record = new Analytics({ userId, action, timestamp: new Date(timestamp) });
-    await record.save();
-    res.status(201).json({ message: 'Analytics record created', record });
+    const data = await getAnalyticsData();
+    res.status(200).json(data);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating analytics record', error });
+    res.status(500).json({ message: 'Error fetching analytics data', error: error.message });
   }
 };
 
-const getAnalyticsData = async (req, res) => {
+const saveAnalytics = async (req, res) => {
+  const analyticsData = req.body;
+
+  if (!analyticsData || !analyticsData.id || !analyticsData.metric || !analyticsData.value) {
+    return res.status(400).json({ message: 'Invalid analytics data' });
+  }
+
   try {
-    const data = await Analytics.find();
-    const metrics = calculateMetrics(data);
-    res.status(200).json({ metrics, data });
+    await saveAnalyticsData(analyticsData);
+    res.status(201).json({ message: 'Analytics data saved successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching analytics data', error });
+    res.status(500).json({ message: 'Error saving analytics data', error: error.message });
   }
 };
 
-module.exports = { createAnalyticsRecord, getAnalyticsData };
+module.exports = { getAnalytics, saveAnalytics };

@@ -1,9 +1,9 @@
 const express = require('express');
-const { createTask, getTasks } = require('../controllers/schedulerController');
+const { getSchedules, addSchedule } = require('../controllers/schedulerController');
 
 const router = express.Router();
 
-router.post('/', createTask);
-router.get('/', getTasks);
+router.get('/', getSchedules); // Obtener todos los horarios
+router.post('/', addSchedule); // Agregar un nuevo horario
 
 module.exports = router;

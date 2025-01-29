@@ -1,11 +1,17 @@
-const mongoose = require('mongoose');
+const connectToMySQL = require('../utils/mysqlConfig');
 
-const feedbackSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
-  eventId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Event' },
-  comment: { type: String, required: true },
-  rating: { type: Number, min: 1, max: 5 },
-  createdAt: { type: Date, default: Date.now },
-});
+const getAllFeedback = async () => {
+  const connection = await connectToMySQL();
+  const [rows] = await connection.execute('SELECT * FROM feedback');
+  return rows;
+};
 
-module.exports = mongoose.model('Feedback', feedbackSchema);
+const createFeedback = async (data) => {
+  const connection = await connectToMySQL();
+  await connection.execute(
+    'INSERT INTO feedback (id, user_id, comments, rating, created_at) VALUES (?, ?, ?, ?, ?)',
+    [data.id, data.user_id, data.comments, data.rating, new Date()]
+  );
+};
+
+module.exports = { getAllFeedback, createFeedback };

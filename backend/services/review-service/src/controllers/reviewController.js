@@ -1,39 +1,28 @@
-const Review = require('../models/reviewModel');
-
-const createReview = async (req, res) => {
-  const { userId, eventId, rating, comment } = req.body;
-
-  if (!userId || !eventId || !rating) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const review = new Review({ userId, eventId, rating, comment });
-    await review.save();
-    res.status(201).json({ message: 'Review created successfully', review });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating review', error });
-  }
-};
+const { getAllReviews, createReview } = require('../models/reviewModel');
 
 const getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find();
+    const reviews = await getAllReviews();
     res.status(200).json(reviews);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching reviews', error });
+    res.status(500).json({ message: 'Error fetching reviews', error: error.message });
   }
 };
 
-const getReviewsByEvent = async (req, res) => {
-  const { eventId } = req.params;
+const addReview = async (req, res) => {
+  const reviewData = req.body;
+
+  if (!reviewData || !reviewData.id || !reviewData.user_id || !reviewData.review_text || !reviewData.rating) {
+    return res.status(400).json({ message: 'Invalid review data' });
+  }
 
   try {
-    const reviews = await Review.find({ eventId });
-    res.status(200).json(reviews);
+    await createReview(reviewData);
+    res.status(201).json({ message: 'Review added successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching reviews for event', error });
+    res.status(500).json({ message: 'Error adding review', error: error.message });
   }
 };
 
-module.exports = { createReview, getReviews, getReviewsByEvent };
+module.exports = { getReviews, addReview };
+

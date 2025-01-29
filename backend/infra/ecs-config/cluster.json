@@ -1,10 +1,18 @@
 {
-  "clusterName": "hotel-cluster",
-  "capacityProviders": ["FARGATE"],
-  "settings": [
-    {
-      "name": "containerInsights",
-      "value": "enabled"
+  "Resources": {
+    "ECSCluster": {
+      "Type": "AWS::ECS::Cluster",
+      "Properties": {
+        "ClusterName": "hotel-event-cluster"
+      }
     }
-  ]
+  },
+  "Outputs": {
+    "ClusterName": {
+      "Description": "Name of the ECS cluster",
+      "Value": {
+        "Ref": "ECSCluster"
+      }
+    }
+  }
 }

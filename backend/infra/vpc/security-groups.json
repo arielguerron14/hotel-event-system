@@ -1,18 +1,29 @@
 {
-    "GroupName": "hotel-security-group",
-    "Description": "Security group for hotel services",
-    "VpcId": "vpc-id",
-    "IpPermissions": [
-      {
-        "IpProtocol": "tcp",
-        "FromPort": 3000,
-        "ToPort": 3019,
-        "IpRanges": [
+  "Resources": {
+    "ECSSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow traffic for ECS tasks",
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "SecurityGroupIngress": [
           {
+            "IpProtocol": "tcp",
+            "FromPort": 0,
+            "ToPort": 65535,
             "CidrIp": "0.0.0.0/0"
           }
         ]
       }
-    ]
+    }
+  },
+  "Outputs": {
+    "ECSSecurityGroupId": {
+      "Description": "Security Group ID for ECS",
+      "Value": {
+        "Ref": "ECSSecurityGroup"
+      }
+    }
   }
-  
+}

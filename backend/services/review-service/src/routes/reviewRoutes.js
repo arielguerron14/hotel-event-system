@@ -1,10 +1,9 @@
 const express = require('express');
-const { createReview, getReviews, getReviewsByEvent } = require('../controllers/reviewController');
+const { getReviews, addReview } = require('../controllers/reviewController');
 
 const router = express.Router();
 
-router.post('/', createReview);
-router.get('/', getReviews);
-router.get('/event/:eventId', getReviewsByEvent);
+router.get('/', getReviews); // Obtener todas las reseñas
+router.post('/', addReview); // Agregar una nueva reseña
 
 module.exports = router;

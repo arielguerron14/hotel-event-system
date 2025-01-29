@@ -1,38 +1,27 @@
-const Invoice = require('../models/invoiceModel');
-const { calculateTotal } = require('../utils/billingHelper');
+const { getBillingRecords, createBillingRecord } = require('../models/billingModel');
 
-const createInvoice = async (req, res) => {
-  const { userId, items } = req.body;
-
-  if (!userId || !items || !Array.isArray(items)) {
-    return res.status(400).json({ message: 'Invalid input data' });
-  }
-
+const getBilling = async (req, res) => {
   try {
-    const total = calculateTotal(items);
-
-    const invoice = new Invoice({
-      userId,
-      items,
-      total,
-      createdAt: new Date(),
-    });
-
-    await invoice.save();
-
-    res.status(201).json({ message: 'Invoice created successfully', invoice });
+    const records = await getBillingRecords();
+    res.status(200).json(records);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating invoice', error });
+    res.status(500).json({ message: 'Error fetching billing records', error: error.message });
   }
 };
 
-const getInvoices = async (req, res) => {
+const createBilling = async (req, res) => {
+  const billingData = req.body;
+
+  if (!billingData || !billingData.id || !billingData.user_id || !billingData.amount || !billingData.status) {
+    return res.status(400).json({ message: 'Invalid billing data' });
+  }
+
   try {
-    const invoices = await Invoice.find();
-    res.status(200).json(invoices);
+    await createBillingRecord(billingData);
+    res.status(201).json({ message: 'Billing record created successfully' });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching invoices', error });
+    res.status(500).json({ message: 'Error creating billing record', error: error.message });
   }
 };
 
-module.exports = { createInvoice, getInvoices };
+module.exports = { getBilling, createBilling };
