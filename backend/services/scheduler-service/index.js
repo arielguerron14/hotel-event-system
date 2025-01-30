@@ -7,7 +7,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Ruta de prueba en la raíz
+// Ruta de prueba en `/`
 app.get('/', (req, res) => {
   res.send('Scheduler Service is running!');
 });
@@ -19,7 +19,8 @@ app.get('/health', (req, res) => {
 
 app.use('/schedules', schedulerRoutes);
 
-const PORT = process.env.PORT || 3018;
+// 🔹 Configurar el puerto desde `.env` o usar 3008 por defecto
+const PORT = process.env.PORT || 3008;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Scheduler Service running on port ${PORT}`);

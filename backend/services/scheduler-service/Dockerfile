@@ -7,6 +7,7 @@ RUN npm install
 
 COPY . .
 
-EXPOSE 3018
+# 🔹 Exponer el puerto 3008
+EXPOSE 3008
 
 CMD ["npm", "start"]

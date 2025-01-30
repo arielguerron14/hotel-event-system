@@ -199,14 +199,12 @@ services:
       - mongodb
 
   scheduler-service:
-    build:
-      context: ./services/scheduler-service
+    build: .
     ports:
-      - "3019:3019"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
+      - "3008:3008"
+    environment:
+      - PORT=3008
+
 
   mongodb:
     image: mongo:5.0
