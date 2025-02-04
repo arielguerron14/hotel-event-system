@@ -1,21 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const bookingRoutes = require('./src/routes/bookingRoutes');
-
-dotenv.config();
+require("dotenv").config();
+const express = require("express");
+const bookingRoutes = require("./src/routes/bookingRoutes");
+const requestLogger = require("./src/utils/middleware/requestLogger");
+const errorHandler = require("./src/utils/middleware/errorHandler");
 
 const app = express();
 app.use(express.json());
-app.use('/bookings', bookingRoutes);
+app.use(requestLogger);
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('Booking Service connected to MongoDB'))
-  .catch((err) => console.error('Database connection error:', err));
+app.use("/bookings", bookingRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3004;
 app.listen(PORT, () => {

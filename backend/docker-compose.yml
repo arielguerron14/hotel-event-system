@@ -53,6 +53,23 @@ services:
     networks:
       - hotel-network
 
+  booking-service:
+    build: ./domains/booking/booking-service
+    ports:
+      - "3004:3004"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_bookings
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+  
+
+
+
 networks:
   hotel-network:
     driver: bridge

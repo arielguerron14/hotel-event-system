@@ -1,43 +1,40 @@
-const Booking = require('../models/bookingModel');
-const { formatDate } = require('../utils/dateHelper');
+const db = require("../models/db");
+const { formatDate } = require("../utils/formatters");
+const { validateDate, validateBookingData } = require("../utils/validators");
+const { generateBookingReference } = require("../utils/helpers");
 
-const createBooking = async (req, res) => {
-  const { userId, eventId, date, guests } = req.body;
-
-  if (!userId || !eventId || !date || !guests) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const booking = new Booking({ userId, eventId, date: new Date(date), guests });
-    await booking.save();
-    res.status(201).json({ message: 'Booking created successfully', booking });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating booking', error });
-  }
+exports.getBookings = (req, res) => {
+  db.query("SELECT * FROM bookings", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const getBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find();
-    res.status(200).json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching bookings', error });
+exports.createBooking = (req, res) => {
+  const { user_id, room_id, check_in, check_out } = req.body;
+
+  if (!validateBookingData(req.body) || !validateDate(check_in) || !validateDate(check_out)) {
+    return res.status(400).json({ error: "Invalid booking data" });
   }
-};
 
-const getBookingById = async (req, res) => {
-  const { id } = req.params;
+  const bookingReference = generateBookingReference();
 
-  try {
-    const booking = await Booking.findById(id);
-    if (!booking) {
-      return res.status(404).json({ message: 'Booking not found' });
+  db.query(
+    "INSERT INTO bookings (user_id, room_id, check_in, check_out, reference) VALUES (?, ?, ?, ?, ?)",
+    [user_id, room_id, formatDate(check_in), formatDate(check_out), bookingReference],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ message: "Booking created successfully", bookingId: results.insertId, reference: bookingReference });
     }
-    res.status(200).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching booking', error });
-  }
+  );
 };
 
-module.exports = { createBooking, getBookings, getBookingById };
+exports.cancelBooking = (req, res) => {
+  const bookingId = req.params.id;
+
+  db.query("DELETE FROM bookings WHERE id = ?", [bookingId], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "Booking cancelled successfully" });
+  });
+};
+
