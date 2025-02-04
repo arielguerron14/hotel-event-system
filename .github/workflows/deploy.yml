@@ -1,4 +1,4 @@
-name: Deploy to AWS ECS
+name: Deploy to AWS
 
 on:
   push:
@@ -8,24 +8,28 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Deploy services to ECS
+      - name: Login to AWS ECR
         run: |
-          for service in auth-service event-service notification-service booking-service payment-service \
-                        user-profile-service review-service analytics-service inventory-service feedback-service \
-                        notification-preferences-service reporting-service audit-log-service support-ticket-service \
-                        email-service file-upload-service notification-queue-service payment-gateway-service \
-                        customer-support-service scheduler-service; do
-            aws ecs update-service --cluster hotel-cluster --service $service --force-new-deployment
-          done
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t auth-service .
+          docker tag auth-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t user-profile-service .
+          docker tag user-profile-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/user-profile-service:latest
+          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/user-profile-service:latest
+
+      - name: Build and Push Docker Image
+        run: |
+          docker build -t notification-preferences-service .
+          docker tag notification-preferences-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/notification-preferences-service:latest
+          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/notification-preferences-service:latest

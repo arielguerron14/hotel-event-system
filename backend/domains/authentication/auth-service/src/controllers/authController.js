@@ -1,18 +1,23 @@
-const jwtHelper = require('../utils/jwtHelper');
-const passwordHelper = require('../utils/passwordHelper');
-const User = require('../models/userModel');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const db = require("../models/db");
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: 'Missing credentials' });
-
-  const user = await User.findOne({ email });
-  if (!user || !(await passwordHelper.verifyPassword(password, user.password))) {
-    return res.status(401).json({ message: 'Invalid credentials' });
-  }
-
-  const token = jwtHelper.generateToken(user._id);
-  res.status(200).json({ token });
+exports.register = (req, res) => {
+  const { username, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  db.query("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "User registered successfully" });
+  });
 };
 
-module.exports = { login };
+exports.login = (req, res) => {
+  const { username, password } = req.body;
+  db.query("SELECT * FROM users WHERE username = ?", [username], (err, results) => {
+    if (err || results.length === 0) return res.status(401).json({ error: "User not found" });
+    const user = results[0];
+    if (!bcrypt.compareSync(password, user.password)) return res.status(401).json({ error: "Invalid password" });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.json({ token });
+  });
+};

@@ -1,37 +1,22 @@
-const Preferences = require('../models/preferencesModel');
+const db = require("../models/db");
 
-const setPreferences = async (req, res) => {
-  const { userId, preferences } = req.body;
-
-  if (!userId || !preferences) {
-    return res.status(400).json({ message: 'User ID and preferences are required' });
-  }
-
-  try {
-    const updatedPreferences = await Preferences.findOneAndUpdate(
-      { userId },
-      { preferences },
-      { new: true, upsert: true }
-    );
-
-    res.status(200).json({ message: 'Preferences updated successfully', updatedPreferences });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating preferences', error });
-  }
+exports.getPreferences = (req, res) => {
+  const userId = req.params.userId;
+  db.query("SELECT * FROM notification_preferences WHERE user_id = ?", [userId], (err, results) => {
+    if (err || results.length === 0) return res.status(404).json({ error: "Preferences not found" });
+    res.json(results[0]);
+  });
 };
 
-const getPreferences = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const preferences = await Preferences.findOne({ userId });
-    if (!preferences) {
-      return res.status(404).json({ message: 'Preferences not found' });
+exports.updatePreferences = (req, res) => {
+  const userId = req.params.userId;
+  const { email_notifications, sms_notifications } = req.body;
+  db.query(
+    "UPDATE notification_preferences SET email_notifications = ?, sms_notifications = ? WHERE user_id = ?",
+    [email_notifications, sms_notifications, userId],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ message: "Notification preferences updated successfully" });
     }
-    res.status(200).json(preferences);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching preferences', error });
-  }
+  );
 };
-
-module.exports = { setPreferences, getPreferences };
