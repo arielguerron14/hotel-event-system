@@ -1,4 +1,5 @@
 const db = require("../models/db");
+const { validateEmail } = require("../utils/validators");
 
 exports.getUserProfile = (req, res) => {
   const userId = req.params.id;
@@ -11,8 +12,14 @@ exports.getUserProfile = (req, res) => {
 exports.updateUserProfile = (req, res) => {
   const userId = req.params.id;
   const { name, email } = req.body;
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
   db.query("UPDATE users SET name = ?, email = ? WHERE id = ?", [name, email, userId], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json({ message: "User profile updated successfully" });
   });
 };
+

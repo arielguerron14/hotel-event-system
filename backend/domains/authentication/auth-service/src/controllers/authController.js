@@ -1,11 +1,17 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const db = require("../models/db");
+const { validateEmail, validatePassword } = require("../utils/validators");
 
 exports.register = (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
+
+  if (!validateEmail(email) || !validatePassword(password)) {
+    return res.status(400).json({ error: "Invalid email or password format" });
+  }
+
   const hashedPassword = bcrypt.hashSync(password, 10);
-  db.query("INSERT INTO users (username, password) VALUES (?, ?)", [username, hashedPassword], (err, results) => {
+  db.query("INSERT INTO users (username, email, password) VALUES (?, ?, ?)", [username, email, hashedPassword], (err, results) => {
     if (err) return res.status(500).json({ error: err });
     res.json({ message: "User registered successfully" });
   });
@@ -21,3 +27,4 @@ exports.login = (req, res) => {
     res.json({ token });
   });
 };
+

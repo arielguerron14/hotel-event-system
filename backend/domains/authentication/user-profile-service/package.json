@@ -1,7 +1,7 @@
 {
   "name": "user-profile-service",
   "version": "1.0.0",
-  "description": "Microservicio para gestión de perfiles de usuario",
+  "description": "Microservicio para la gestión de perfiles de usuario",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -15,3 +15,5 @@
     "bcryptjs": "^2.4.3"
   }
 }
+
+

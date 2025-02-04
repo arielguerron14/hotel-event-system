@@ -1,4 +1,5 @@
 const db = require("../models/db");
+const { validateEmail, validateNotificationPreferences } = require("../utils/validators");
 
 exports.getPreferences = (req, res) => {
   const userId = req.params.userId;
@@ -11,6 +12,11 @@ exports.getPreferences = (req, res) => {
 exports.updatePreferences = (req, res) => {
   const userId = req.params.userId;
   const { email_notifications, sms_notifications } = req.body;
+
+  if (!validateNotificationPreferences(req.body)) {
+    return res.status(400).json({ error: "Invalid preferences format" });
+  }
+
   db.query(
     "UPDATE notification_preferences SET email_notifications = ?, sms_notifications = ? WHERE user_id = ?",
     [email_notifications, sms_notifications, userId],
