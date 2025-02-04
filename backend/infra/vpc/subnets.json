@@ -1,35 +1,40 @@
-[
-    {
-      "CidrBlock": "10.0.1.0/24",
-      "VpcId": "vpc-id",
-      "AvailabilityZone": "us-east-1a",
-      "TagSpecifications": [
-        {
-          "ResourceType": "subnet",
-          "Tags": [
-            {
-              "Key": "Name",
-              "Value": "subnet-public-1"
-            }
-          ]
-        }
-      ]
+{
+  "Resources": {
+    "PublicSubnet1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "CidrBlock": "10.0.1.0/24",
+        "AvailabilityZone": "us-east-1a",
+        "MapPublicIpOnLaunch": true
+      }
     },
-    {
-      "CidrBlock": "10.0.2.0/24",
-      "VpcId": "vpc-id",
-      "AvailabilityZone": "us-east-1b",
-      "TagSpecifications": [
-        {
-          "ResourceType": "subnet",
-          "Tags": [
-            {
-              "Key": "Name",
-              "Value": "subnet-public-2"
-            }
-          ]
-        }
-      ]
+    "PublicSubnet2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "CidrBlock": "10.0.2.0/24",
+        "AvailabilityZone": "us-east-1b",
+        "MapPublicIpOnLaunch": true
+      }
     }
-  ]
-  
+  },
+  "Outputs": {
+    "PublicSubnet1Id": {
+      "Description": "Public Subnet 1 ID",
+      "Value": {
+        "Ref": "PublicSubnet1"
+      }
+    },
+    "PublicSubnet2Id": {
+      "Description": "Public Subnet 2 ID",
+      "Value": {
+        "Ref": "PublicSubnet2"
+      }
+    }
+  }
+}

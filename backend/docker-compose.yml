@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  mysql-db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hotel_auth
+    ports:
+      - "3306:3306"
+    networks:
+      - hotel-network
+
+  auth-service:
+    build: ./domains/authentication/auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_auth
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  user-profile-service:
+    build: ./domains/authentication/user-profile-service
+    ports:
+      - "3006:3006"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_auth
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  notification-preferences-service:
+    build: ./domains/authentication/notification-preferences-service
+    ports:
+      - "3011:3011"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_auth
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  booking-service:
+    build: ./domains/booking/booking-service
+    ports:
+      - "3004:3004"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_bookings
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+  
+
+
+
+networks:
+  hotel-network:
+    driver: bridge

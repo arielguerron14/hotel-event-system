@@ -1,12 +1,33 @@
 {
-    "DBInstanceIdentifier": "hotel-rds-instance",
-    "AllocatedStorage": 20,
-    "DBInstanceClass": "db.t3.micro",
-    "Engine": "mysql",
-    "MasterUsername": "admin",
-    "MasterUserPassword": "securepassword",
-    "VpcSecurityGroupIds": ["sg-id"],
-    "DBSubnetGroupName": "hotel-db-subnet-group",
-    "MultiAZ": false
+  "Resources": {
+    "RDSInstance": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "AllocatedStorage": "20",
+        "DBInstanceClass": "db.t3.micro",
+        "Engine": "mysql",
+        "EngineVersion": "8.0",
+        "MasterUsername": "admin",
+        "MasterUserPassword": "securepassword",
+        "DBName": "hotel_event_system",
+        "PubliclyAccessible": true,
+        "VPCSecurityGroups": [
+          {
+            "Ref": "RDSSecurityGroup"
+          }
+        ],
+        "DBSubnetGroupName": {
+          "Ref": "RDSSubnetGroup"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "RDSInstanceEndpoint": {
+      "Description": "RDS Instance Endpoint",
+      "Value": {
+        "Fn::GetAtt": ["RDSInstance", "Endpoint.Address"]
+      }
+    }
   }
-  
+}

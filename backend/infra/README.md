@@ -1,14 +1,15 @@
-# Infraestructura del Proyecto
+# Infraestructura del Proyecto Hotel Event System
 
-Esta carpeta contiene las configuraciones necesarias para desplegar la infraestructura en AWS.
+Esta carpeta contiene los recursos para desplegar la infraestructura en AWS.
 
-## Componentes
+## Contenido
 
-- **ECS Config**: Configuración del cluster ECS y las definiciones de tareas.
-- **VPC**: Configuración de la red, subredes y grupos de seguridad.
-- **RDS**: Configuración de la base de datos relacional.
+- **ecs-config/**: Configuración del clúster ECS y definiciones de tareas.
+- **rds/**: Configuración de la instancia RDS y su grupo de seguridad.
+- **vpc/**: Configuración de la red VPC, subnets y grupos de seguridad.
 
-## Despliegue
+## Uso
 
-1. Configura tus credenciales de AWS.
-2. Ejecuta los comandos necesarios utilizando la CLI de AWS o Terraform para crear los recursos.
+1. Implementar los recursos en AWS utilizando AWS CLI o AWS CloudFormation:
+   ```bash
+   aws cloudformation create-stack --stack-name hotel-event-infra --template-body file://<path_to_file>

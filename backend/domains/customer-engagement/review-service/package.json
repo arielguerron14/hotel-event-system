@@ -1,0 +1,15 @@
+{
+  "name": "review-service",
+  "version": "1.0.0",
+  "description": "Service for managing reviews using MySQL",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.1.2"
+  }
+}
