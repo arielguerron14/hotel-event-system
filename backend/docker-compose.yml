@@ -67,9 +67,76 @@ services:
     networks:
       - hotel-network
   
+  room-service:
+    build: ./domains/booking/room-service
+    ports:
+      - "3013:3013"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_rooms
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
 
+  payment-service:
+    build: ./domains/booking/payment-service
+    ports:
+      - "3005:3005"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_payments
+      - STRIPE_SECRET_KEY=sk_test_example
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+  
+  payment-gateway-service:
+    build: ./domains/booking/payment-gateway-service
+    ports:
+      - "3023:3023"
+    environment:
+      - PAYPAL_API_URL=https://api.sandbox.paypal.com
+      - PAYPAL_CLIENT_ID=your-paypal-client-id
+      - PAYPAL_SECRET=your-paypal-secret
+      - STRIPE_SECRET_KEY=sk_test_example
+    networks:
+      - hotel-network
 
+  billing-service:
+    build: ./domains/booking/billing-service
+    ports:
+      - "3015:3015"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_billing
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
 
+  scheduler-service:
+    build: ./domains/booking/scheduler-service
+    ports:
+      - "3018:3018"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_scheduler
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+    
 networks:
   hotel-network:
     driver: bridge

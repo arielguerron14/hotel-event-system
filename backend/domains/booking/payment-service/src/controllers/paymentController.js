@@ -1,38 +1,43 @@
-const Payment = require('../models/paymentModel');
-const { processPayment } = require('../utils/paymentProcessor');
+const db = require("../models/db");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const { validatePaymentData } = require("../utils/validators");
+const { formatAmount } = require("../utils/formatters");
+const { generateTransactionId } = require("../utils/helpers");
 
-const createPayment = async (req, res) => {
-  const { userId, amount, method } = req.body;
+exports.getPayments = (req, res) => {
+  db.query("SELECT * FROM payments", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
+};
 
-  if (!userId || !amount || !method) {
-    return res.status(400).json({ message: 'Missing required fields' });
+exports.processPayment = async (req, res) => {
+  const { amount, currency, payment_method, description } = req.body;
+
+  if (!validatePaymentData(req.body)) {
+    return res.status(400).json({ error: "Invalid payment data" });
   }
 
   try {
-    const paymentResult = await processPayment({ userId, amount, method });
-
-    const payment = new Payment({
-      userId,
-      amount,
-      method,
-      status: paymentResult.status,
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Stripe usa centavos
+      currency,
+      payment_method,
+      description,
+      confirm: true
     });
 
-    await payment.save();
+    const transactionId = generateTransactionId();
 
-    res.status(201).json({ message: 'Payment processed successfully', payment });
+    db.query(
+      "INSERT INTO payments (transaction_id, amount, currency, payment_method, description, status) VALUES (?, ?, ?, ?, ?, ?)",
+      [transactionId, formatAmount(amount), currency, payment_method, description, paymentIntent.status],
+      (err, results) => {
+        if (err) return res.status(500).json({ error: err });
+        res.json({ message: "Payment processed successfully", transactionId });
+      }
+    );
   } catch (error) {
-    res.status(500).json({ message: 'Error processing payment', error });
+    res.status(500).json({ error: error.message });
   }
 };
-
-const getPayments = async (req, res) => {
-  try {
-    const payments = await Payment.find();
-    res.status(200).json(payments);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching payments', error });
-  }
-};
-
-module.exports = { createPayment, getPayments };

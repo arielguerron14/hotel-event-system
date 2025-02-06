@@ -1,9 +1,8 @@
-const express = require('express');
-const { getTransactions, processTransaction } = require('../controllers/paymentGatewayController');
-
+const express = require("express");
 const router = express.Router();
+const { processStripePayment, processPayPalPayment } = require("../controllers/paymentGatewayController");
 
-router.get('/', getTransactions); // Obtener todas las transacciones
-router.post('/', processTransaction); // Procesar una nueva transacción
+router.post("/stripe", processStripePayment);
+router.post("/paypal", processPayPalPayment);
 
 module.exports = router;

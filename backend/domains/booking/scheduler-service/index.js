@@ -1,28 +1,18 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const schedulerRoutes = require('./src/routes/schedulerRoutes');
-
-dotenv.config();
+require("dotenv").config();
+const express = require("express");
+const schedulerRoutes = require("./src/routes/schedulerRoutes");
+const requestLogger = require("./src/utils/middleware/requestLogger");
+const errorHandler = require("./src/utils/middleware/errorHandler");
 
 const app = express();
 app.use(express.json());
+app.use(requestLogger);
 
-// Ruta de prueba en `/`
-app.get('/', (req, res) => {
-  res.send('Scheduler Service is running!');
-});
+app.use("/schedules", schedulerRoutes);
 
-// Ruta de salud
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', service: 'scheduler-service' });
-});
+app.use(errorHandler);
 
-app.use('/schedules', schedulerRoutes);
-
-// 🔹 Configurar el puerto desde `.env` o usar 3008 por defecto
-const PORT = process.env.PORT || 3008;
-
-app.listen(PORT, "0.0.0.0", () => {
+const PORT = process.env.PORT || 3018;
+app.listen(PORT, () => {
   console.log(`Scheduler Service running on port ${PORT}`);
 });
-

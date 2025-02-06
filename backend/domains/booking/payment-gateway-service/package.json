@@ -1,15 +1,16 @@
 {
   "name": "payment-gateway-service",
   "version": "1.0.0",
-  "description": "Service for processing payments using MySQL",
+  "description": "Microservicio para la integración con pasarelas de pago",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest"
+    "start": "node index.js"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mysql2": "^3.1.2"
+    "dotenv": "^16.0.3",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.0",
+    "axios": "^1.3.0"
   }
 }

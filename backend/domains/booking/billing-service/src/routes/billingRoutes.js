@@ -1,9 +1,8 @@
-const express = require('express');
-const { getBilling, createBilling } = require('../controllers/billingController');
-
+const express = require("express");
 const router = express.Router();
+const { generateInvoice, getInvoices } = require("../controllers/billingController");
 
-router.get('/', getBilling); // Obtener registros de facturación
-router.post('/', createBilling); // Crear un nuevo registro de facturación
+router.get("/", getInvoices);
+router.post("/generate", generateInvoice);
 
 module.exports = router;

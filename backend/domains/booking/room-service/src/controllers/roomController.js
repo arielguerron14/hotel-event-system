@@ -1,47 +1,44 @@
-const Room = require('../models/roomModel');
+const db = require("../models/db");
+const { validateRoomData } = require("../utils/validators");
+const { formatPrice } = require("../utils/formatters");
+const { generateRoomIdentifier } = require("../utils/helpers");
 
-const addRoom = async (req, res) => {
-  const { name, type, price, availability } = req.body;
-
-  if (!name || !type || !price) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const room = new Room({ name, type, price, availability });
-    await room.save();
-    res.status(201).json({ message: 'Room added successfully', room });
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding room', error });
-  }
+exports.getRooms = (req, res) => {
+  db.query("SELECT * FROM rooms", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const getRooms = async (req, res) => {
-  try {
-    const rooms = await Room.find();
-    res.status(200).json(rooms);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching rooms', error });
-  }
-};
+exports.createRoom = (req, res) => {
+  const { room_number, type, price, status } = req.body;
 
-const updateRoomAvailability = async (req, res) => {
-  const { id } = req.params;
-  const { availability } = req.body;
-
-  if (availability == null) {
-    return res.status(400).json({ message: 'Availability is required' });
+  if (!validateRoomData(req.body)) {
+    return res.status(400).json({ error: "Invalid room data" });
   }
 
-  try {
-    const room = await Room.findByIdAndUpdate(id, { availability }, { new: true });
-    if (!room) {
-      return res.status(404).json({ message: 'Room not found' });
+  const roomIdentifier = generateRoomIdentifier();
+
+  db.query(
+    "INSERT INTO rooms (room_number, type, price, status, identifier) VALUES (?, ?, ?, ?, ?)",
+    [room_number, type, formatPrice(price), status, roomIdentifier],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({ message: "Room created successfully", roomId: results.insertId, identifier: roomIdentifier });
     }
-    res.status(200).json({ message: 'Room availability updated', room });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating room availability', error });
-  }
+  );
 };
 
-module.exports = { addRoom, getRooms, updateRoomAvailability };
+exports.updateRoomStatus = (req, res) => {
+  const roomId = req.params.id;
+  const { status } = req.body;
+
+  if (!["available", "occupied", "maintenance"].includes(status)) {
+    return res.status(400).json({ error: "Invalid room status" });
+  }
+
+  db.query("UPDATE rooms SET status = ? WHERE id = ?", [status, roomId], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "Room status updated successfully" });
+  });
+};
