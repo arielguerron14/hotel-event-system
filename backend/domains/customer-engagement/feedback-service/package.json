@@ -1,15 +1,16 @@
 {
   "name": "feedback-service",
   "version": "1.0.0",
-  "description": "Service for handling user feedback using MySQL",
+  "description": "Microservicio para la gestión de retroalimentación de los clientes",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest"
+    "start": "node index.js"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "mysql2": "^3.1.2"
+    "dotenv": "^16.0.3",
+    "mysql2": "^2.3.3",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.0"
   }
 }

@@ -1,28 +1,35 @@
-const { getAllReviews, createReview } = require('../models/reviewModel');
+const db = require("../models/db");
+const { validateReviewData } = require("../utils/validators");
+const { formatReviewMessage } = require("../utils/formatters");
+const { generateReviewId } = require("../utils/helpers");
 
-const getReviews = async (req, res) => {
-  try {
-    const reviews = await getAllReviews();
-    res.status(200).json(reviews);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching reviews', error: error.message });
-  }
+exports.getReviews = (req, res) => {
+  db.query("SELECT * FROM reviews", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const addReview = async (req, res) => {
-  const reviewData = req.body;
+exports.submitReview = (req, res) => {
+  const { customer_id, rating, comments } = req.body;
 
-  if (!reviewData || !reviewData.id || !reviewData.user_id || !reviewData.review_text || !reviewData.rating) {
-    return res.status(400).json({ message: 'Invalid review data' });
+  if (!validateReviewData(req.body)) {
+    return res.status(400).json({ error: "Invalid review data" });
   }
 
-  try {
-    await createReview(reviewData);
-    res.status(201).json({ message: 'Review added successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding review', error: error.message });
-  }
+  const reviewId = generateReviewId();
+  const formattedComments = formatReviewMessage(comments);
+
+  db.query(
+    "INSERT INTO reviews (review_id, customer_id, rating, comments) VALUES (?, ?, ?, ?)",
+    [reviewId, customer_id, rating, formattedComments],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Review submitted successfully",
+        reviewId,
+        formattedComments
+      });
+    }
+  );
 };
-
-module.exports = { getReviews, addReview };
-

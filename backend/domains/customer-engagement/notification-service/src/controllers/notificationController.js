@@ -1,29 +1,57 @@
-const { getAllNotifications, createNotification } = require('../models/notificationModel');
+const db = require("../models/db");
+const nodemailer = require("nodemailer");
+const { validateNotificationData } = require("../utils/validators");
+const { formatEmailSubject } = require("../utils/formatters");
+const { generateNotificationId } = require("../utils/helpers");
 
-const getNotifications = async (req, res) => {
-  try {
-    const notifications = await getAllNotifications();
-    res.status(200).json(notifications);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching notifications', error: error.message });
-  }
+exports.getNotifications = (req, res) => {
+  db.query("SELECT * FROM notifications", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const sendNotification = async (req, res) => {
-  const notificationData = req.body;
+exports.sendNotification = (req, res) => {
+  const { recipient, subject, message } = req.body;
 
-  if (!notificationData || !notificationData.id || !notificationData.user_id || !notificationData.message || !notificationData.status) {
-    return res.status(400).json({ message: 'Invalid notification data' });
+  if (!validateNotificationData(req.body)) {
+    return res.status(400).json({ error: "Invalid notification data" });
   }
 
-  try {
-    await createNotification(notificationData);
-    res.status(201).json({ message: 'Notification sent successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error sending notification', error: error.message });
-  }
+  const formattedSubject = formatEmailSubject(subject);
+  const notificationId = generateNotificationId();
+
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  let mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: recipient,
+    subject: formattedSubject,
+    text: message
+  };
+
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    } else {
+      db.query(
+        "INSERT INTO notifications (notification_id, recipient, subject, message) VALUES (?, ?, ?, ?)",
+        [notificationId, recipient, formattedSubject, message],
+        (err, results) => {
+          if (err) return res.status(500).json({ error: err });
+          res.json({
+            message: "Notification sent successfully",
+            notificationId: results.insertId,
+            generatedNotificationId: notificationId
+          });
+        }
+      );
+    }
+  });
 };
-
-module.exports = { getNotifications, sendNotification };
-
-

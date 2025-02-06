@@ -1,28 +1,35 @@
-const { getAllFeedback, createFeedback } = require('../models/feedbackModel');
+const db = require("../models/db");
+const { validateFeedbackData } = require("../utils/validators");
+const { formatFeedbackMessage } = require("../utils/formatters");
+const { generateFeedbackId } = require("../utils/helpers");
 
-const getFeedback = async (req, res) => {
-  try {
-    const feedback = await getAllFeedback();
-    res.status(200).json(feedback);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching feedback', error: error.message });
-  }
+exports.getFeedback = (req, res) => {
+  db.query("SELECT * FROM feedback", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const submitFeedback = async (req, res) => {
-  const feedbackData = req.body;
+exports.submitFeedback = (req, res) => {
+  const { customer_id, rating, comments } = req.body;
 
-  if (!feedbackData || !feedbackData.id || !feedbackData.user_id || !feedbackData.comments || !feedbackData.rating) {
-    return res.status(400).json({ message: 'Invalid feedback data' });
+  if (!validateFeedbackData(req.body)) {
+    return res.status(400).json({ error: "Invalid feedback data" });
   }
 
-  try {
-    await createFeedback(feedbackData);
-    res.status(201).json({ message: 'Feedback submitted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error submitting feedback', error: error.message });
-  }
+  const feedbackId = generateFeedbackId();
+  const formattedComments = formatFeedbackMessage(comments);
+
+  db.query(
+    "INSERT INTO feedback (feedback_id, customer_id, rating, comments) VALUES (?, ?, ?, ?)",
+    [feedbackId, customer_id, rating, formattedComments],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Feedback submitted successfully",
+        feedbackId,
+        formattedComments
+      });
+    }
+  );
 };
-
-module.exports = { getFeedback, submitFeedback };
-

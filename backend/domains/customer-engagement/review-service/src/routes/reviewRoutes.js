@@ -1,9 +1,8 @@
-const express = require('express');
-const { getReviews, addReview } = require('../controllers/reviewController');
-
+const express = require("express");
 const router = express.Router();
+const { getReviews, submitReview } = require("../controllers/reviewController");
 
-router.get('/', getReviews); // Obtener todas las reseñas
-router.post('/', addReview); // Agregar una nueva reseña
+router.get("/", getReviews);
+router.post("/", submitReview);
 
 module.exports = router;

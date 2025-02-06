@@ -136,7 +136,63 @@ services:
     networks:
       - hotel-network
 
+  notification-service:
+    build: ./domains/customer-engagement/notification-service
+    ports:
+      - "3003:3003"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_notifications
+      - EMAIL_USER=your-email@example.com
+      - EMAIL_PASS=your-email-password
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  email-service:
+    build: ./domains/customer-engagement/email-service
+    ports:
+      - "3012:3012"
+    environment:
+      - EMAIL_USER=your-email@example.com
+      - EMAIL_PASS=your-email-password
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=587
+    networks:
+      - hotel-network
     
+  feedback-service:
+    build: ./domains/customer-engagement/feedback-service
+    ports:
+      - "3010:3010"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_feedback
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  review-service:
+    build: ./domains/customer-engagement/review-service
+    ports:
+      - "3007:3007"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_reviews
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+
 networks:
   hotel-network:
     driver: bridge
