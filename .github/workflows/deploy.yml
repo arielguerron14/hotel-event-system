@@ -8,9 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Login to AWS ECR
         run: |
@@ -18,18 +19,10 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t auth-service .
-          docker tag auth-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
-          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/auth-service:latest
+          docker build -t hotel-event-backend .
+          docker tag hotel-event-backend:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/hotel-event-backend:latest
+          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/hotel-event-backend:latest
 
-      - name: Build and Push Docker Image
+      - name: Deploy to AWS ECS
         run: |
-          docker build -t user-profile-service .
-          docker tag user-profile-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/user-profile-service:latest
-          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/user-profile-service:latest
-
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t notification-preferences-service .
-          docker tag notification-preferences-service:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/notification-preferences-service:latest
-          docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/notification-preferences-service:latest
+          aws ecs update-service --cluster hotel-event-cluster --service hotel-event-service --force-new-deployment

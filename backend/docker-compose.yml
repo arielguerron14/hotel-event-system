@@ -1,61 +1,85 @@
 version: "3.8"
 
 services:
-  mysql-db:
+  mysql-auth:
     image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: hotel_auth
     ports:
+      - "3307:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  mysql-system:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hotel_system
+    ports:
       - "3306:3306"
     networks:
       - hotel-network
-
-  mysql-db:
-    build: ./infra/databases/mysql-db
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MYSQL_DATABASE=hotel_system
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
 
   postgres-db:
-    build: ./infra/databases/postgres-db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: hotel_system
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=rootpassword
-      - POSTGRES_DB=hotel_system
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
 
   backend:
     build: ./backend
     ports:
-      - "3000-3030:3000-3030"
+      - "3000:3000"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-system
       - DB_USER=root
       - DB_PASSWORD=rootpassword
     depends_on:
-      - mysql-db
+      mysql-system:
+        condition: service_healthy
+    networks:
+      - hotel-network
 
   frontend:
     build: ./frontend
     ports:
       - "80:80"
-
+    networks:
+      - hotel-network
 
   auth-service:
     build: ./domains/authentication/auth-service
     ports:
       - "3001:3001"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-auth
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=hotel_auth
     depends_on:
-      - mysql-db
+      mysql-auth:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -64,12 +88,13 @@ services:
     ports:
       - "3006:3006"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-auth
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=hotel_auth
     depends_on:
-      - mysql-db
+      mysql-auth:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -78,12 +103,13 @@ services:
     ports:
       - "3011:3011"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-auth
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=hotel_auth
     depends_on:
-      - mysql-db
+      mysql-auth:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -92,26 +118,13 @@ services:
     ports:
       - "3004:3004"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-system
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=hotel_bookings
     depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-  
-  room-service:
-    build: ./domains/booking/room-service
-    ports:
-      - "3013:3013"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_rooms
-    depends_on:
-      - mysql-db
+      mysql-system:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -120,69 +133,14 @@ services:
     ports:
       - "3005:3005"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-system
       - DB_USER=root
       - DB_PASSWORD=rootpassword
       - DB_NAME=hotel_payments
       - STRIPE_SECRET_KEY=sk_test_example
     depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-  
-  payment-gateway-service:
-    build: ./domains/booking/payment-gateway-service
-    ports:
-      - "3023:3023"
-    environment:
-      - PAYPAL_API_URL=https://api.sandbox.paypal.com
-      - PAYPAL_CLIENT_ID=your-paypal-client-id
-      - PAYPAL_SECRET=your-paypal-secret
-      - STRIPE_SECRET_KEY=sk_test_example
-    networks:
-      - hotel-network
-
-  billing-service:
-    build: ./domains/booking/billing-service
-    ports:
-      - "3015:3015"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_billing
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  scheduler-service:
-    build: ./domains/booking/scheduler-service
-    ports:
-      - "3018:3018"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_scheduler
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  notification-service:
-    build: ./domains/customer-engagement/notification-service
-    ports:
-      - "3003:3003"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_notifications
-      - EMAIL_USER=your-email@example.com
-      - EMAIL_PASS=your-email-password
-    depends_on:
-      - mysql-db
+      mysql-system:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -197,102 +155,19 @@ services:
       - SMTP_PORT=587
     networks:
       - hotel-network
-    
-  feedback-service:
-    build: ./domains/customer-engagement/feedback-service
-    ports:
-      - "3010:3010"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_feedback
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
 
-  review-service:
-    build: ./domains/customer-engagement/review-service
+  analytics-service:
+    build: ./domains/analytics/analytics-service
     ports:
-      - "3007:3007"
+      - "3008:3008"
     environment:
-      - DB_HOST=mysql-db
+      - DB_HOST=mysql-system
       - DB_USER=root
       - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_reviews
+      - DB_NAME=hotel_analytics
     depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  loyalty-service:
-    build: ./domains/customer-engagement/loyalty-service
-    ports:
-      - "3017:3017"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_loyalty
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  support-service:
-    build: ./domains/customer-engagement/support-service
-    ports:
-      - "3016:3016"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_support
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  event-service:
-    build: ./domains/customer-engagement/event-service
-    ports:
-      - "3022:3022"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_events
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-
-  notification-preferences-service:
-    build: ./domains/authentication/notification-preferences-service
-    ports:
-      - "3011:3011"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=notification_preferences
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-    
-  inventory-service:
-    build: ./domains/analytics/inventory-service
-    ports:
-      - "3009:3009"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_inventory
-    depends_on:
-      - mysql-db
+      mysql-system:
+        condition: service_healthy
     networks:
       - hotel-network
 
@@ -305,34 +180,6 @@ services:
       - AWS_SECRET_ACCESS_KEY=your_secret_key
       - AWS_REGION=us-east-1
       - S3_BUCKET_NAME=your_bucket_name
-    networks:
-      - hotel-network
-
-  reporting-service:
-    build: ./domains/analytics/reporting-service
-    ports:
-      - "3014:3014"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_reports
-    depends_on:
-      - mysql-db
-    networks:
-      - hotel-network
-      
-  analytics-service:
-    build: ./domains/analytics/analytics-service
-    ports:
-      - "3008:3008"
-    environment:
-      - DB_HOST=mysql-db
-      - DB_USER=root
-      - DB_PASSWORD=rootpassword
-      - DB_NAME=hotel_analytics
-    depends_on:
-      - mysql-db
     networks:
       - hotel-network
 

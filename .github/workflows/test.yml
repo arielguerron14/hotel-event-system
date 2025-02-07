@@ -1,56 +1,30 @@
-name: Test Microservices
+name: Run Tests
 
 on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        service:
-          - auth-service
-          - event-service
-          - notification-service
-          - booking-service
-          - payment-service
-          - user-profile-service
-          - review-service
-          - analytics-service
-          - inventory-service
-          - feedback-service
-          - notification-preferences-service
-          - reporting-service
-          - audit-log-service
-          - support-ticket-service
-          - email-service
-          - file-upload-service
-          - notification-queue-service
-          - payment-gateway-service
-          - customer-support-service
-          - scheduler-service
-
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Install dependencies
-        run: |
-          cd ./services/${{ matrix.service }}
-          npm install
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Run tests
-        run: |
-          cd ./services/${{ matrix.service }}
-          npm test
+      - name: Run Tests
+        run: npm run test
