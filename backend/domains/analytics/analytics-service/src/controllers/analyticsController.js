@@ -1,27 +1,25 @@
-const { getAnalyticsData, saveAnalyticsData } = require('../models/analyticsModel');
+const db = require("../models/db");
+const { formatAnalyticsData } = require("../utils/formatters");
+const { generateAnalyticsId } = require("../utils/helpers");
 
-const getAnalytics = async (req, res) => {
-  try {
-    const data = await getAnalyticsData();
-    res.status(200).json(data);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching analytics data', error: error.message });
-  }
+exports.getBookingStats = (req, res) => {
+  db.query(
+    "SELECT COUNT(*) AS total_bookings, DATE(created_at) AS date FROM bookings GROUP BY DATE(created_at)",
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+
+      res.json({ id: generateAnalyticsId(), stats: formatAnalyticsData(results) });
+    }
+  );
 };
 
-const saveAnalytics = async (req, res) => {
-  const analyticsData = req.body;
+exports.getRevenueStats = (req, res) => {
+  db.query(
+    "SELECT SUM(amount) AS total_revenue, DATE(payment_date) AS date FROM payments GROUP BY DATE(payment_date)",
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
 
-  if (!analyticsData || !analyticsData.id || !analyticsData.metric || !analyticsData.value) {
-    return res.status(400).json({ message: 'Invalid analytics data' });
-  }
-
-  try {
-    await saveAnalyticsData(analyticsData);
-    res.status(201).json({ message: 'Analytics data saved successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error saving analytics data', error: error.message });
-  }
+      res.json({ id: generateAnalyticsId(), stats: formatAnalyticsData(results) });
+    }
+  );
 };
-
-module.exports = { getAnalytics, saveAnalytics };

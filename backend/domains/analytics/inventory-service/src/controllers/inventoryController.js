@@ -1,27 +1,42 @@
-const { getAllInventory, createInventoryItem } = require('../models/inventoryModel');
+const db = require("../models/db");
+const { validateInventoryData } = require("../utils/validators");
+const { formatInventoryItem } = require("../utils/formatters");
+const { generateInventoryId } = require("../utils/helpers");
 
-const getInventory = async (req, res) => {
-  try {
-    const inventory = await getAllInventory();
-    res.status(200).json(inventory);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching inventory', error: error.message });
-  }
+exports.getInventory = (req, res) => {
+  db.query("SELECT * FROM inventory", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const addInventoryItem = async (req, res) => {
-  const inventoryData = req.body;
+exports.updateInventory = (req, res) => {
+  const { item_name, quantity, location } = req.body;
 
-  if (!inventoryData || !inventoryData.id || !inventoryData.name || !inventoryData.quantity || !inventoryData.price) {
-    return res.status(400).json({ message: 'Invalid inventory data' });
+  if (!validateInventoryData(req.body)) {
+    return res.status(400).json({ error: "Invalid inventory data" });
   }
 
-  try {
-    await createInventoryItem(inventoryData);
-    res.status(201).json({ message: 'Inventory item added successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding inventory item', error: error.message });
-  }
+  const inventoryId = generateInventoryId();
+  const formattedItem = formatInventoryItem({ item_name, quantity, location });
+
+  db.query(
+    "INSERT INTO inventory (inventory_id, item_name, quantity, location) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE quantity=?, location=?",
+    [
+      inventoryId,
+      formattedItem.item_name,
+      formattedItem.quantity,
+      formattedItem.location,
+      formattedItem.quantity,
+      formattedItem.location
+    ],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Inventory updated successfully",
+        inventoryId,
+        formattedItem
+      });
+    }
+  );
 };
-
-module.exports = { getInventory, addInventoryItem };

@@ -1,7 +1,7 @@
 {
   "name": "notification-preferences-service",
   "version": "1.0.0",
-  "description": "Microservicio para la gestión de preferencias de notificación",
+  "description": "Microservicio para la gestión de preferencias de notificaciones de los usuarios",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

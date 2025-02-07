@@ -1,22 +1,9 @@
-const express = require('express');
-const multer = require('multer');
-const { uploadFile, downloadFile } = require('../controllers/fileController');
-
+const express = require("express");
 const router = express.Router();
+const { uploadFile, getFile } = require("../controllers/fileStorageController");
+const upload = require("../utils/middleware/multerConfig");
 
-// Configuración de Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const upload = multer({ storage });
-
-router.post('/upload', upload.single('file'), uploadFile);
-router.get('/download/:fileName', downloadFile);
+router.post("/upload", upload.single("file"), uploadFile);
+router.get("/:filename", getFile);
 
 module.exports = router;

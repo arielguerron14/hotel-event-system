@@ -1,0 +1,19 @@
+{
+    "family": "hotel-event-task",
+    "containerDefinitions": [
+      {
+        "name": "backend",
+        "image": "<AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/hotel-event-backend:latest",
+        "cpu": 512,
+        "memory": 1024,
+        "portMappings": [
+          {
+            "containerPort": 3000,
+            "hostPort": 3000
+          }
+        ],
+        "essential": true
+      }
+    ]
+  }
+  

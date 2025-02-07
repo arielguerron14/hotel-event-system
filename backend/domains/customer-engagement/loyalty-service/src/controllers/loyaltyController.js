@@ -1,60 +1,35 @@
-const Loyalty = require('../models/loyaltyModel');
-const { calculatePoints } = require('../utils/loyaltyHelper');
+const db = require("../models/db");
+const { validateLoyaltyData } = require("../utils/validators");
+const { formatLoyaltyPoints } = require("../utils/formatters");
+const { generateLoyaltyId } = require("../utils/helpers");
 
-const addPoints = async (req, res) => {
-  const { userId, points } = req.body;
-
-  if (!userId || !points) {
-    return res.status(400).json({ message: 'User ID and points are required' });
-  }
-
-  try {
-    const loyalty = await Loyalty.findOneAndUpdate(
-      { userId },
-      { $inc: { points } },
-      { new: true, upsert: true }
-    );
-
-    res.status(200).json({ message: 'Points added successfully', loyalty });
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding points', error });
-  }
+exports.getLoyaltyPoints = (req, res) => {
+  db.query("SELECT * FROM loyalty_points", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const getLoyaltyInfo = async (req, res) => {
-  const { userId } = req.params;
+exports.addLoyaltyPoints = (req, res) => {
+  const { customer_id, points } = req.body;
 
-  try {
-    const loyalty = await Loyalty.findOne({ userId });
-    if (!loyalty) {
-      return res.status(404).json({ message: 'No loyalty data found for this user' });
+  if (!validateLoyaltyData(req.body)) {
+    return res.status(400).json({ error: "Invalid loyalty data" });
+  }
+
+  const loyaltyId = generateLoyaltyId();
+  const formattedPoints = formatLoyaltyPoints(points);
+
+  db.query(
+    "INSERT INTO loyalty_points (loyalty_id, customer_id, points) VALUES (?, ?, ?)",
+    [loyaltyId, customer_id, formattedPoints],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Loyalty points added successfully",
+        loyaltyId,
+        formattedPoints
+      });
     }
-    res.status(200).json(loyalty);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching loyalty data', error });
-  }
+  );
 };
-
-const redeemPoints = async (req, res) => {
-  const { userId, points } = req.body;
-
-  if (!userId || !points) {
-    return res.status(400).json({ message: 'User ID and points are required' });
-  }
-
-  try {
-    const loyalty = await Loyalty.findOne({ userId });
-    if (!loyalty || loyalty.points < points) {
-      return res.status(400).json({ message: 'Not enough points' });
-    }
-
-    loyalty.points -= points;
-    await loyalty.save();
-
-    res.status(200).json({ message: 'Points redeemed successfully', loyalty });
-  } catch (error) {
-    res.status(500).json({ message: 'Error redeeming points', error });
-  }
-};
-
-module.exports = { addPoints, getLoyaltyInfo, redeemPoints };

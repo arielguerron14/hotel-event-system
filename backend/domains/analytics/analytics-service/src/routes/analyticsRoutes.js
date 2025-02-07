@@ -1,9 +1,8 @@
-const express = require('express');
-const { getAnalytics, saveAnalytics } = require('../controllers/analyticsController');
-
+const express = require("express");
 const router = express.Router();
+const { getBookingStats, getRevenueStats } = require("../controllers/analyticsController");
 
-router.get('/', getAnalytics);
-router.post('/', saveAnalytics);
+router.get("/bookings", getBookingStats);
+router.get("/revenue", getRevenueStats);
 
 module.exports = router;

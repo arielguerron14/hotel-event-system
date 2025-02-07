@@ -1,53 +1,35 @@
-const SupportTicket = require('../models/supportTicketModel');
+const db = require("../models/db");
+const { validateSupportTicket } = require("../utils/validators");
+const { formatSupportMessage } = require("../utils/formatters");
+const { generateSupportTicketId } = require("../utils/helpers");
 
-const createTicket = async (req, res) => {
-  const { userId, subject, message } = req.body;
-
-  if (!userId || !subject || !message) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const ticket = new SupportTicket({ userId, subject, message });
-    await ticket.save();
-    res.status(201).json({ message: 'Support ticket created successfully', ticket });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating support ticket', error });
-  }
+exports.getSupportTickets = (req, res) => {
+  db.query("SELECT * FROM support_tickets", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const getTickets = async (req, res) => {
-  try {
-    const tickets = await SupportTicket.find();
-    res.status(200).json(tickets);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching support tickets', error });
-  }
-};
+exports.createSupportTicket = (req, res) => {
+  const { customer_id, subject, message } = req.body;
 
-const updateTicketStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  if (!status) {
-    return res.status(400).json({ message: 'Status is required' });
+  if (!validateSupportTicket(req.body)) {
+    return res.status(400).json({ error: "Invalid support ticket data" });
   }
 
-  try {
-    const ticket = await SupportTicket.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
+  const ticketId = generateSupportTicketId();
+  const formattedMessage = formatSupportMessage(message);
 
-    if (!ticket) {
-      return res.status(404).json({ message: 'Support ticket not found' });
+  db.query(
+    "INSERT INTO support_tickets (ticket_id, customer_id, subject, message) VALUES (?, ?, ?, ?)",
+    [ticketId, customer_id, subject, formattedMessage],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Support ticket created successfully",
+        ticketId,
+        formattedMessage
+      });
     }
-
-    res.status(200).json({ message: 'Support ticket updated successfully', ticket });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating support ticket', error });
-  }
+  );
 };
-
-module.exports = { createTicket, getTickets, updateTicketStatus };

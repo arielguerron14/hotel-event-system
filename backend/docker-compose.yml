@@ -11,6 +11,40 @@ services:
     networks:
       - hotel-network
 
+  mysql-db:
+    build: ./infra/databases/mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=hotel_system
+
+  postgres-db:
+    build: ./infra/databases/postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=rootpassword
+      - POSTGRES_DB=hotel_system
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000-3030:3000-3030"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+    depends_on:
+      - mysql-db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+
+
   auth-service:
     build: ./domains/authentication/auth-service
     ports:
@@ -192,6 +226,115 @@ services:
     networks:
       - hotel-network
 
+  loyalty-service:
+    build: ./domains/customer-engagement/loyalty-service
+    ports:
+      - "3017:3017"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_loyalty
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  support-service:
+    build: ./domains/customer-engagement/support-service
+    ports:
+      - "3016:3016"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_support
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  event-service:
+    build: ./domains/customer-engagement/event-service
+    ports:
+      - "3022:3022"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_events
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  notification-preferences-service:
+    build: ./domains/authentication/notification-preferences-service
+    ports:
+      - "3011:3011"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=notification_preferences
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+    
+  inventory-service:
+    build: ./domains/analytics/inventory-service
+    ports:
+      - "3009:3009"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_inventory
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+
+  file-storage-service:
+    build: ./domains/analytics/file-storage-service
+    ports:
+      - "3019:3019"
+    environment:
+      - AWS_ACCESS_KEY_ID=your_access_key
+      - AWS_SECRET_ACCESS_KEY=your_secret_key
+      - AWS_REGION=us-east-1
+      - S3_BUCKET_NAME=your_bucket_name
+    networks:
+      - hotel-network
+
+  reporting-service:
+    build: ./domains/analytics/reporting-service
+    ports:
+      - "3014:3014"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_reports
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
+      
+  analytics-service:
+    build: ./domains/analytics/analytics-service
+    ports:
+      - "3008:3008"
+    environment:
+      - DB_HOST=mysql-db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_NAME=hotel_analytics
+    depends_on:
+      - mysql-db
+    networks:
+      - hotel-network
 
 networks:
   hotel-network:

@@ -1,25 +1,40 @@
-const { generateRevenueReport } = require('../utils/reportHelper');
+const db = require("../models/db");
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
+const { validateReportType } = require("../utils/validators");
+const { formatReportData } = require("../utils/formatters");
+const { generateReportId } = require("../utils/helpers");
 
-const generateReport = async (req, res) => {
-  const { reportType } = req.body;
+exports.generateReport = (req, res) => {
+  const { reportType } = req.params;
 
-  if (!reportType) {
-    return res.status(400).json({ message: 'Report type is required' });
+  if (!validateReportType(reportType)) {
+    return res.status(400).json({ error: "Invalid report type" });
   }
 
-  try {
-    let report;
-
-    if (reportType === 'revenue') {
-      report = await generateRevenueReport();
-    } else {
-      return res.status(400).json({ message: 'Invalid report type' });
-    }
-
-    res.status(200).json({ message: 'Report generated successfully', report });
-  } catch (error) {
-    res.status(500).json({ message: 'Error generating report', error });
+  let query = "";
+  if (reportType === "bookings") {
+    query = "SELECT * FROM bookings";
+  } else if (reportType === "revenue") {
+    query = "SELECT * FROM payments";
   }
+
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+
+    const reportId = generateReportId();
+    const formattedData = formatReportData(results);
+
+    const doc = new PDFDocument();
+    const filePath = `./reports/${reportId}.pdf`;
+
+    doc.pipe(fs.createWriteStream(filePath));
+    doc.text(`Report ID: ${reportId}`, { align: "center" });
+    doc.text(`Report Type: ${reportType}`, { align: "center" });
+    doc.moveDown();
+    doc.text(formattedData);
+    doc.end();
+
+    res.json({ message: "Report generated successfully", reportId, filePath });
+  });
 };
-
-module.exports = { generateReport };
