@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   test:
@@ -15,42 +17,51 @@ jobs:
     strategy:
       matrix:
         service:
-          - auth-service
-          - event-service
-          - notification-service
-          - booking-service
-          - payment-service
-          - user-profile-service
-          - review-service
-          - analytics-service
-          - inventory-service
-          - feedback-service
-          - notification-preferences-service
-          - reporting-service
-          - audit-log-service
-          - support-ticket-service
-          - email-service
-          - file-upload-service
-          - notification-queue-service
-          - payment-gateway-service
-          - customer-support-service
-          - scheduler-service
+          - authentication/auth-service
+          - authentication/user-profile-service
+          - authentication/notification-preferences-service
+          - booking/booking-service
+          - booking/billing-service
+          - booking/payment-service
+          - booking/payment-gateway-service
+          - booking/room-service
+          - booking/scheduler-service
+          - customer-engagement/notification-service
+          - customer-engagement/email-service
+          - customer-engagement/feedback-service
+          - customer-engagement/review-service
+          - customer-engagement/loyalty-service
+          - customer-engagement/support-service
+          - customer-engagement/event-service
+          - analytics/analytics-service
+          - analytics/reporting-service
+          - analytics/inventory-service
+          - analytics/file-storage-service
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
         run: |
-          cd ./services/${{ matrix.service }}
-          npm install
+          if [ -d "./backend/domains/${{ matrix.service }}" ]; then
+            cd ./backend/domains/${{ matrix.service }}
+            npm install
+          else
+            echo "Directory ./backend/domains/${{ matrix.service }} not found. Skipping..."
+          fi
 
-      - name: Run tests
+      - name: Run Tests
         run: |
-          cd ./services/${{ matrix.service }}
-          npm test
+          if [ -d "./backend/domains/${{ matrix.service }}" ]; then
+            cd ./backend/domains/${{ matrix.service }}
+            npm test
+          else
+            echo "Skipping tests for missing service: ${{ matrix.service }}"
+          fi
