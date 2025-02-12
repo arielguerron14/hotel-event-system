@@ -7,16 +7,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ../frontend:/app
+      - ../frontend:/usr/src/app
     command: ["npm", "run", "start"]
 
   backend:
     build:
-      context: ..
+      context: ../backend
     ports:
       - "4000:4000"
     env_file:
-      - ./dev.env
+      - ./docker/dev.env
     depends_on:
       - mongodb
 
