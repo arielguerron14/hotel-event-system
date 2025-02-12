@@ -7,4 +7,10 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  build: {
+    outDir: "dist",
+    rollupOptions: {
+      input: "public/index.html", // 🔹 Asegura que el index.html sea el punto de entrada
+    },
+  },
 });
