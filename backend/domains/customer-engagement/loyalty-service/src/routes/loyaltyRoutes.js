@@ -1,10 +1,8 @@
-const express = require('express');
-const { addPoints, getLoyaltyInfo, redeemPoints } = require('../controllers/loyaltyController');
-
+const express = require("express");
 const router = express.Router();
+const { getLoyaltyPoints, addLoyaltyPoints } = require("../controllers/loyaltyController");
 
-router.post('/add-points', addPoints);
-router.get('/:userId', getLoyaltyInfo);
-router.post('/redeem-points', redeemPoints);
+router.get("/", getLoyaltyPoints);
+router.post("/", addLoyaltyPoints);
 
 module.exports = router;

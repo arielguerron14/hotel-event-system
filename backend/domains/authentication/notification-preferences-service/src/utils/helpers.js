@@ -1,6 +1,7 @@
+const crypto = require("crypto");
+
 module.exports = {
-    generateRandomString: (length) => {
-      return Math.random().toString(36).substring(2, length + 2);
-    }
-  };
-  
+  generatePreferenceId: () => {
+    return "PREF-" + crypto.randomBytes(4).toString("hex").toUpperCase();
+  }
+};

@@ -1,57 +1,35 @@
-const Event = require('../models/eventModel');
+const db = require("../models/db");
+const { validateEventData } = require("../utils/validators");
+const { formatEventDetails } = require("../utils/formatters");
+const { generateEventId } = require("../utils/helpers");
 
-const createEvent = async (req, res) => {
-  const { title, description, date, location } = req.body;
-
-  if (!title || !date || !location) {
-    return res.status(400).json({ message: 'Missing required fields' });
-  }
-
-  try {
-    const event = new Event({ title, description, date, location });
-    await event.save();
-    res.status(201).json({ message: 'Event created successfully', event });
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating event', error });
-  }
+exports.getEvents = (req, res) => {
+  db.query("SELECT * FROM events", (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json(results);
+  });
 };
 
-const getEvents = async (req, res) => {
-  try {
-    const events = await Event.find();
-    res.status(200).json(events);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching events', error });
+exports.createEvent = (req, res) => {
+  const { name, date, location, description } = req.body;
+
+  if (!validateEventData(req.body)) {
+    return res.status(400).json({ error: "Invalid event data" });
   }
-};
 
-const updateEvent = async (req, res) => {
-  const { id } = req.params;
-  const updates = req.body;
+  const eventId = generateEventId();
+  const formattedDetails = formatEventDetails({ name, date, location, description });
 
-  try {
-    const event = await Event.findByIdAndUpdate(id, updates, { new: true });
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
+  db.query(
+    "INSERT INTO events (event_id, name, date, location, description) VALUES (?, ?, ?, ?, ?)",
+    [eventId, formattedDetails.name, formattedDetails.date, formattedDetails.location, formattedDetails.description],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err });
+      res.json({
+        message: "Event created successfully",
+        eventId,
+        formattedDetails
+      });
     }
-    res.status(200).json({ message: 'Event updated successfully', event });
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating event', error });
-  }
+  );
 };
-
-const deleteEvent = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const event = await Event.findByIdAndDelete(id);
-    if (!event) {
-      return res.status(404).json({ message: 'Event not found' });
-    }
-    res.status(200).json({ message: 'Event deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting event', error });
-  }
-};
-
-module.exports = { createEvent, getEvents, updateEvent, deleteEvent };

@@ -1,10 +1,8 @@
-const express = require('express');
-const { createTicket, getTickets, updateTicketStatus } = require('../controllers/supportController');
-
+const express = require("express");
 const router = express.Router();
+const { getSupportTickets, createSupportTicket } = require("../controllers/supportController");
 
-router.post('/', createTicket);
-router.get('/', getTickets);
-router.put('/:id', updateTicketStatus);
+router.get("/", getSupportTickets);
+router.post("/", createSupportTicket);
 
 module.exports = router;

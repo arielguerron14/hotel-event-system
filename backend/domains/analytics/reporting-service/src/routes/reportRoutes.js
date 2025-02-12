@@ -1,8 +1,7 @@
-const express = require('express');
-const { generateReport } = require('../controllers/reportController');
-
+const express = require("express");
 const router = express.Router();
+const { generateReport } = require("../controllers/reportingController");
 
-router.post('/', generateReport);
+router.get("/:reportType", generateReport);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-name: Test Microservices
+name: Run Tests
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
           node-version: '18'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           if [ -d "./backend/domains/${{ matrix.service }}" ]; then
             cd ./backend/domains/${{ matrix.service }}

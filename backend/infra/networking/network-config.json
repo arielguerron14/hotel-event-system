@@ -1,0 +1,23 @@
+{
+  "vpc": {
+    "cidr": "10.0.0.0/16"
+  },
+  "subnets": [
+    {
+      "name": "public-subnet",
+      "cidr": "10.0.1.0/24",
+      "availability_zone": "us-east-1a"
+    },
+    {
+      "name": "private-subnet",
+      "cidr": "10.0.2.0/24",
+      "availability_zone": "us-east-1b"
+    }
+  ],
+  "security_groups": [
+    {
+      "name": "backend-sg",
+      "ports": [80, 443, 3306, 5432]
+    }
+  ]
+}

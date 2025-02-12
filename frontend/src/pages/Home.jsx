@@ -1,14 +1,14 @@
-import React from 'react';
-import Header from '../components/Header';
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const Home = () => {
   return (
     <div>
-      <Header />
-      <main>
-        <h2>Bienvenido al Sistema de Gestión de Eventos</h2>
-        <p>Gestiona tus eventos de manera eficiente.</p>
+      <Navbar />
+      <main className="p-10">
+        <h1 className="text-3xl font-bold">Welcome to Hotel Event System</h1>
       </main>
+      <Footer />
     </div>
   );
 };

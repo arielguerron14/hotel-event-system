@@ -1,24 +1,18 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const roomRoutes = require('./src/routes/roomRoutes');
-
-dotenv.config();
+require("dotenv").config();
+const express = require("express");
+const roomRoutes = require("./src/routes/roomRoutes");
+const requestLogger = require("./src/utils/middleware/requestLogger");
+const errorHandler = require("./src/utils/middleware/errorHandler");
 
 const app = express();
 app.use(express.json());
-app.use('/rooms', roomRoutes);
+app.use(requestLogger);
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('Room Service connected to MongoDB'))
-  .catch((err) => console.error('Database connection error:', err));
+app.use("/rooms", roomRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3013;
 app.listen(PORT, () => {
   console.log(`Room Service running on port ${PORT}`);
 });
-

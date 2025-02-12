@@ -1,51 +1,54 @@
-const path = require('path');
-const File = require('../models/fileModel');
+const AWS = require("aws-sdk");
+const fs = require("fs");
+const path = require("path");
+const { validateFileUpload } = require("../utils/validators");
+const { formatFileName } = require("../utils/formatters");
+const { generateFileId } = require("../utils/helpers");
 
-const uploadFile = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ message: 'No file uploaded' });
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+
+const s3 = new AWS.S3();
+
+exports.uploadFile = (req, res) => {
+  if (!req.file || !validateFileUpload(req.file)) {
+    return res.status(400).json({ error: "Invalid file upload" });
   }
 
-  try {
-    const file = new File({
-      originalName: req.file.originalname,
-      storedName: req.file.filename,
-      filePath: `/uploads/${req.file.filename}`,
-      fileType: req.file.mimetype,
-      size: req.file.size,
-    });
+  const formattedFileName = formatFileName(req.file.originalname);
+  const fileId = generateFileId();
 
-    await file.save();
+  const params = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: formattedFileName,
+    Body: fs.createReadStream(req.file.path),
+    ContentType: req.file.mimetype
+  };
 
-    res.status(201).json({
-      message: 'File uploaded successfully',
-      file,
+  s3.upload(params, (err, data) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    res.json({
+      message: "File uploaded successfully",
+      fileId,
+      fileUrl: data.Location
     });
-  } catch (error) {
-    res.status(500).json({ message: 'Error saving file metadata', error });
-  }
+  });
 };
 
-const downloadFile = async (req, res) => {
-  const { fileName } = req.params;
+exports.getFile = (req, res) => {
+  const params = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: req.params.filename
+  };
 
-  try {
-    const file = await File.findOne({ storedName: fileName });
+  s3.getObject(params, (err, data) => {
+    if (err) return res.status(404).json({ error: "File not found" });
 
-    if (!file) {
-      return res.status(404).json({ message: 'File not found in database' });
-    }
-
-    const filePath = path.join(__dirname, '../../uploads', fileName);
-
-    res.download(filePath, (err) => {
-      if (err) {
-        return res.status(404).json({ message: 'File not found in storage' });
-      }
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Error downloading file', error });
-  }
+    res.setHeader("Content-Type", data.ContentType);
+    res.send(data.Body);
+  });
 };
-
-module.exports = { uploadFile, downloadFile };

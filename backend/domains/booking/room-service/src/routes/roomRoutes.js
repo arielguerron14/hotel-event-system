@@ -1,10 +1,9 @@
-const express = require('express');
-const { addRoom, getRooms, updateRoomAvailability } = require('../controllers/roomController');
-
+const express = require("express");
 const router = express.Router();
+const { getRooms, createRoom, updateRoomStatus } = require("../controllers/roomController");
 
-router.post('/', addRoom);
-router.get('/', getRooms);
-router.put('/:id', updateRoomAvailability);
+router.get("/", getRooms);
+router.post("/", createRoom);
+router.put("/:id", updateRoomStatus);
 
 module.exports = router;

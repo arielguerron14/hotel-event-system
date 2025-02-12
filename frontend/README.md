@@ -1,54 +1,55 @@
-Documentación para el equipo de desarrollo del frontend.
+# Hotel Event System - Frontend
 
-markdown
+Este es el frontend del sistema de gestión de eventos para una cadena de hoteles.
+
+## 📌 Instalación
+1. Clonar el repositorio:
+   ```sh
+   git clone https://github.com/tu-usuario/hotel-event-system.git
+
+Navegar al directorio:
+sh
 Copiar
 Editar
-# Hotel Frontend
-
-Este proyecto es el frontend del sistema de gestión de eventos para una cadena de hoteles.
-
-## Requisitos Previos
-
-- Node.js (versión 16 o superior)
-- npm o yarn
-
-## Instalación
-
-1. Instala las dependencias:
-   ```bash
-   npm install
-Ejecuta el servidor de desarrollo:
-
-bash
+cd frontend
+Instalar dependencias:
+sh
+Copiar
+Editar
+npm install
+🚀 Ejecución del Proyecto
+Modo Desarrollo
+sh
 Copiar
 Editar
 npm run dev
-Construye la aplicación para producción:
-
-bash
+Modo Producción
+sh
 Copiar
 Editar
 npm run build
-yaml
+🐳 Ejecutar con Docker
+sh
+Copiar
+Editar
+docker build -t hotel-event-frontend .
+docker run -p 80:80 hotel-event-frontend
+🛠 Tecnologías Utilizadas
+React.js
+Vite
+React Router
+Tailwind CSS
+DaisyUI
+Docker
+perl
 Copiar
 Editar
 
 ---
 
-#### **4. `.gitignore`**
+## **📌 Resumen Final**
+✅ **Se generaron los archivos `package.json`, `vite.config.js`, `Dockerfile`, `.eslintrc.json`, `.gitignore`, `.prettierrc` y `README.md`.**  
+✅ **Listo para desarrollo con `Vite`, `React Router` y `Tailwind CSS`.**  
+✅ **Soporta despliegue con `Docker`.**  
 
-Archivo para excluir archivos innecesarios del repositorio.
-
-```plaintext
-# Dependencias de Node.js
-node_modules/
-
-# Archivos de construcción
-dist/
-
-# Configuración local de IDE
-.vscode/
-.idea/
-
-# Archivos de logs
-*.log
+📢 **¿Quieres que agregue algo más o necesitas ayuda con el despliegue? 🚀**

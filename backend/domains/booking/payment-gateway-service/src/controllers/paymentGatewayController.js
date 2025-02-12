@@ -1,27 +1,55 @@
-const { getAllTransactions, createTransaction } = require('../models/paymentGatewayModel');
+const axios = require("axios");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const { validatePaymentData } = require("../utils/validators");
+const { formatAmount } = require("../utils/formatters");
+const { generateTransactionId } = require("../utils/helpers");
 
-const getTransactions = async (req, res) => {
-  try {
-    const transactions = await getAllTransactions();
-    res.status(200).json(transactions);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching transactions', error: error.message });
-  }
-};
+exports.processStripePayment = async (req, res) => {
+  const { amount, currency, payment_method, description } = req.body;
 
-const processTransaction = async (req, res) => {
-  const transactionData = req.body;
-
-  if (!transactionData || !transactionData.id || !transactionData.user_id || !transactionData.amount || !transactionData.status) {
-    return res.status(400).json({ message: 'Invalid transaction data' });
+  if (!validatePaymentData(req.body)) {
+    return res.status(400).json({ error: "Invalid payment data" });
   }
 
   try {
-    await createTransaction(transactionData);
-    res.status(201).json({ message: 'Transaction processed successfully' });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // Stripe usa centavos
+      currency,
+      payment_method,
+      description,
+      confirm: true
+    });
+
+    res.json({ message: "Payment processed successfully", status: paymentIntent.status });
   } catch (error) {
-    res.status(500).json({ message: 'Error processing transaction', error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-module.exports = { getTransactions, processTransaction };
+exports.processPayPalPayment = async (req, res) => {
+  const { amount, currency, description } = req.body;
+
+  if (!validatePaymentData(req.body)) {
+    return res.status(400).json({ error: "Invalid payment data" });
+  }
+
+  try {
+    const response = await axios.post(
+      `${process.env.PAYPAL_API_URL}/v2/checkout/orders`,
+      {
+        intent: "CAPTURE",
+        purchase_units: [{ amount: { currency_code: currency, value: amount }, description }]
+      },
+      {
+        auth: {
+          username: process.env.PAYPAL_CLIENT_ID,
+          password: process.env.PAYPAL_SECRET
+        }
+      }
+    );
+
+    res.json({ message: "PayPal payment created", orderId: response.data.id });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

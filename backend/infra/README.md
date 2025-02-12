@@ -1,15 +1,37 @@
-# Infraestructura del Proyecto Hotel Event System
+📌 8️⃣ Pasos para Desplegar en AWS
+📌 1. Crear Infraestructura Manualmente
 
-Esta carpeta contiene los recursos para desplegar la infraestructura en AWS.
+VPC y Subredes en AWS Networking
+RDS MySQL/PostgreSQL en AWS RDS
+S3 Bucket en AWS S3
+ECS Cluster en AWS ECS
+📌 2. Crear Repositorio en ECR
 
-## Contenido
+sh
+Copiar
+Editar
+aws ecr create-repository --repository-name hotel-event-backend
+📌 3. Construir y Subir Imagen
 
-- **ecs-config/**: Configuración del clúster ECS y definiciones de tareas.
-- **rds/**: Configuración de la instancia RDS y su grupo de seguridad.
-- **vpc/**: Configuración de la red VPC, subnets y grupos de seguridad.
+sh
+Copiar
+Editar
+docker build -t hotel-event-backend .
+docker tag hotel-event-backend:latest <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/hotel-event-backend:latest
+docker push <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/hotel-event-backend:latest
+📌 4. Crear Servicio en ECS
 
-## Uso
+sh
+Copiar
+Editar
+aws ecs create-service \
+  --cluster hotel-event-cluster \
+  --service-name hotel-event-service \
+  --task-definition hotel-event-backend \
+  --launch-type FARGATE
+📌 5. Configurar CloudWatch
 
-1. Implementar los recursos en AWS utilizando AWS CLI o AWS CloudFormation:
-   ```bash
-   aws cloudformation create-stack --stack-name hotel-event-infra --template-body file://<path_to_file>
+Crear alertas para errores, CPU y latencia.
+📌 6. Configurar Load Balancer (ALB)
+
+Redirigir tráfico al servicio ECS.

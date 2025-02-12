@@ -1,16 +1,17 @@
 {
   "name": "file-storage-service",
   "version": "1.0.0",
-  "description": "Service for managing file storage",
+  "description": "Microservicio para la gestión de almacenamiento de archivos en la cadena de hoteles",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest"
+    "start": "node index.js"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "multer": "^1.4.5",
-    "mongoose": "^6.10.0"
+    "dotenv": "^16.0.3",
+    "multer": "^1.4.5-lts.1",
+    "aws-sdk": "^2.1047.0",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.0"
   }
 }

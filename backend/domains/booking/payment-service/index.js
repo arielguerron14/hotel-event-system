@@ -1,21 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const paymentRoutes = require('./src/routes/paymentRoutes');
-
-dotenv.config();
+require("dotenv").config();
+const express = require("express");
+const paymentRoutes = require("./src/routes/paymentRoutes");
+const requestLogger = require("./src/utils/middleware/requestLogger");
+const errorHandler = require("./src/utils/middleware/errorHandler");
 
 const app = express();
 app.use(express.json());
-app.use('/payments', paymentRoutes);
+app.use(requestLogger);
 
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('Payment Service connected to MongoDB'))
-  .catch((err) => console.error('Database connection error:', err));
+app.use("/payments", paymentRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => {

@@ -1,10 +1,8 @@
-const express = require('express');
-const { getInventory, addInventoryItem } = require('../controllers/inventoryController');
-
+const express = require("express");
 const router = express.Router();
+const { getInventory, updateInventory } = require("../controllers/inventoryController");
 
-router.get('/', getInventory); // Obtener todos los items de inventario
-router.post('/', addInventoryItem); // Agregar un nuevo item al inventario
+router.get("/", getInventory);
+router.put("/", updateInventory);
 
 module.exports = router;
-
