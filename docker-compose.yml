@@ -1,210 +1,63 @@
-version: '3.8'
 services:
-  frontend:
-    build:
-      context: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-    command: ["npm", "run", "start"]
-  auth-service:
-    build:
-      context: ./services/auth-service
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  event-service:
-    build:
-      context: ./services/event-service
-    ports:
-      - "3001:3001"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  notification-service:
-    build:
-      context: ./services/notification-service
-    ports:
-      - "3002:3002"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  booking-service:
-    build:
-      context: ./services/booking-service
-    ports:
-      - "3003:3003"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  payment-service:
-    build:
-      context: ./services/payment-service
-    ports:
-      - "3004:3004"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  user-profile-service:
-    build:
-      context: ./services/user-profile-service
-    ports:
-      - "3005:3005"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  review-service:
-    build:
-      context: ./services/review-service
-    ports:
-      - "3006:3006"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  analytics-service:
-    build:
-      context: ./services/analytics-service
-    ports:
-      - "3007:3007"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  inventory-service:
-    build:
-      context: ./services/inventory-service
-    ports:
-      - "3008:3008"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  feedback-service:
-    build:
-      context: ./services/feedback-service
-    ports:
-      - "3009:3009"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  notification-preferences-service:
-    build:
-      context: ./services/notification-preferences-service
-    ports:
-      - "3010:3010"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  reporting-service:
-    build:
-      context: ./services/reporting-service
-    ports:
-      - "3011:3011"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  audit-log-service:
-    build:
-      context: ./services/audit-log-service
-    ports:
-      - "3012:3012"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  support-ticket-service:
-    build:
-      context: ./services/support-ticket-service
-    ports:
-      - "3013:3013"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  email-service:
-    build:
-      context: ./services/email-service
-    ports:
-      - "3014:3014"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  file-upload-service:
-    build:
-      context: ./services/file-upload-service
-    ports:
-      - "3015:3015"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  notification-queue-service:
-    build:
-      context: ./services/notification-queue-service
-    ports:
-      - "3016:3016"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  payment-gateway-service:
-    build:
-      context: ./services/payment-gateway-service
-    ports:
-      - "3017:3017"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  customer-support-service:
-    build:
-      context: ./services/customer-support-service
-    ports:
-      - "3018:3018"
-    env_file:
-      - ./env/dev.env
-    depends_on:
-      - mongodb
-
-  scheduler-service:
-    build: .
-    ports:
-      - "3008:3008"
+  mysql-auth:
+    image: mysql:latest
     environment:
-      - PORT=3008
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hotel_auth
+    ports:
+      - "3307:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
 
+  mysql-system:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hotel_system
+    ports:
+      - "3306:3306"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s 
+
+  postgres-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: hotel_system
+    ports:
+      - "5432:5432"
+    networks:
+      - hotel-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "root"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    networks:
+      - hotel-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      - hotel-network
 
   mongodb:
     image: mongo:5.0
@@ -213,6 +66,159 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - hotel-network
+
+  analytics-service:
+    build: ./backend/domains/analytics/analytics-service
+    ports:
+      - "3008:3008"
+    networks:
+      - hotel-network
+
+  auth-service:
+    build: ./backend/domains/authentication/auth-service
+    ports:
+      - "3001:3001"
+    networks:
+      - hotel-network
+
+  billing-service:
+    build: ./backend/domains/booking/billing-service
+    ports:
+      - "3015:3015"
+    networks:
+      - hotel-network
+
+  booking-service:
+    build: ./backend/domains/booking/booking-service
+    ports:
+      - "3004:3004"
+    networks:
+      - hotel-network
+
+  customer-engagement-service:
+    build: ./backend/domains/customer-engagement
+    ports:
+      - "3004:3004"
+    networks:
+      - hotel-network
+
+  email-service:
+    build: ./backend/domains/customer-engagement/email-service
+    ports:
+      - "3012:3012"
+    networks:
+      - hotel-network
+
+  event-service:
+    build: ./backend/domains/customer-engagement/event-service
+    ports:
+      - "3022:3022"
+    networks:
+      - hotel-network
+
+  feedback-service:
+    build: ./backend/domains/customer-engagement/feedback-service
+    ports:
+      - "3010:3010"
+    networks:
+      - hotel-network
+
+  file-storage-service:
+    build: ./backend/domains/analytics/file-storage-service
+    ports:
+      - "3019:3019"
+    networks:
+      - hotel-network
+
+  inventory-service:
+    build: ./backend/domains/analytics/inventory-service
+    ports:
+      - "3009:3009"
+    networks:
+      - hotel-network
+
+  loyalty-service:
+    build: ./backend/domains/customer-engagement/loyalty-service
+    ports:
+      - "3017:3017"
+    networks:
+      - hotel-network
+
+  notification-preferences-service:
+    build: ./backend/domains/authentication/notification-preferences-service
+    ports:
+      - "3011:3011"
+    networks:
+      - hotel-network
+
+  notification-service:
+    build: ./backend/domains/customer-engagement/notification-service
+    ports:
+      - "3003:3003"
+    networks:
+      - hotel-network
+
+  payment-gateway-service:
+    build: ./backend/domains/booking/payment-gateway-service
+    ports:
+      - "3023:3023"
+    networks:
+      - hotel-network
+
+  payment-service:
+    build: ./backend/domains/booking/payment-service
+    ports:
+      - "3005:3005"
+    networks:
+      - hotel-network
+
+  reporting-service:
+    build: ./backend/domains/analytics/reporting-service
+    ports:
+      - "3014:3014"
+    networks:
+      - hotel-network
+
+  review-service:
+    build: ./backend/domains/customer-engagement/review-service
+    ports:
+      - "3007:3007"
+    networks:
+      - hotel-network
+
+  room-service:
+    build: ./backend/domains/booking/room-service
+    ports:
+      - "3013:3013"
+    networks:
+      - hotel-network
+
+  scheduler-service:
+    build: ./backend/domains/booking/scheduler-service
+    ports:
+      - "3018:3018"
+    networks:
+      - hotel-network
+
+  support-service:
+    build: ./backend/domains/customer-engagement/support-service
+    ports:
+      - "3016:3016"
+    networks:
+      - hotel-network
+
+  user-profile-service:
+    build: ./backend/domains/authentication/user-profile-service
+    ports:
+      - "3006:3006"
+    networks:
+      - hotel-network
 
 volumes:
   mongodb_data:
+
+networks:
+  hotel-network:
+    driver: bridge
