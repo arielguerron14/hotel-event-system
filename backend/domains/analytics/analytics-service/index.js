@@ -8,7 +8,8 @@ const app = express();
 app.use(express.json());
 app.use(requestLogger);
 
-app.use("/analytics", analyticsRoutes);
+app.use("/api/analytics", analyticsRoutes);
+
 
 app.use(errorHandler);
 
