@@ -1,78 +1,8 @@
 services:
-  mysql-auth:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: hotel_auth
+  user-profile-service:
+    build: ./backend/domains/authentication/user-profile-service
     ports:
-      - "3307:3306"
-    networks:
-      - hotel-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      start_period: 10s
-
-  mysql-system:
-    image: mysql:latest
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: hotel_system
-    ports:
-      - "3306:3306"
-    networks:
-      - hotel-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      start_period: 10s 
-
-  postgres-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: rootpassword
-      POSTGRES_DB: hotel_system
-    ports:
-      - "5432:5432"
-    networks:
-      - hotel-network
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "root"]
-      interval: 10s
-      retries: 5
-      start_period: 10s
-
-  backend:
-    build: ./backend
-    ports:
-      - "3000:3000"
-    networks:
-      - hotel-network
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "80:80"
-    networks:
-      - hotel-network
-
-  mongodb:
-    image: mongo:5.0
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - hotel-network
-
-  analytics-service:
-    build: ./backend/domains/analytics/analytics-service
-    ports:
-      - "3008:3008"
+      - "3006:3006"
     networks:
       - hotel-network
 
@@ -83,10 +13,10 @@ services:
     networks:
       - hotel-network
 
-  billing-service:
-    build: ./backend/domains/booking/billing-service
+  notification-preferences-service:
+    build: ./backend/domains/authentication/notification-preferences-service
     ports:
-      - "3015:3015"
+      - "3011:3011"
     networks:
       - hotel-network
 
@@ -97,10 +27,59 @@ services:
     networks:
       - hotel-network
 
-  customer-engagement-service:
-    build: ./backend/domains/customer-engagement
+  payment-service:
+    build: ./backend/domains/booking/payment-service
     ports:
-      - "3004:3004"
+      - "3005:3005"
+    networks:
+      - hotel-network
+
+  payment-gateway-service:
+    build: ./backend/domains/booking/payment-gateway-service
+    ports:
+      - "3023:3023"
+    networks:
+      - hotel-network
+
+  room-service:
+    build: ./backend/domains/booking/room-service
+    ports:
+      - "3013:3013"
+    networks:
+      - hotel-network
+
+  scheduler-service:
+    build: ./backend/domains/booking/scheduler-service
+    ports:
+      - "3018:3018"
+    networks:
+      - hotel-network
+
+  analytics-service:
+    build: ./backend/domains/analytics/analytics-service
+    ports:
+      - "3008:3008"
+    networks:
+      - hotel-network
+
+  inventory-service:
+    build: ./backend/domains/analytics/inventory-service
+    ports:
+      - "3009:3009"
+    networks:
+      - hotel-network
+
+  reporting-service:
+    build: ./backend/domains/analytics/reporting-service
+    ports:
+      - "3014:3014"
+    networks:
+      - hotel-network
+
+  file-storage-service:
+    build: ./backend/domains/analytics/file-storage-service
+    ports:
+      - "3019:3019"
     networks:
       - hotel-network
 
@@ -125,31 +104,10 @@ services:
     networks:
       - hotel-network
 
-  file-storage-service:
-    build: ./backend/domains/analytics/file-storage-service
-    ports:
-      - "3019:3019"
-    networks:
-      - hotel-network
-
-  inventory-service:
-    build: ./backend/domains/analytics/inventory-service
-    ports:
-      - "3009:3009"
-    networks:
-      - hotel-network
-
   loyalty-service:
     build: ./backend/domains/customer-engagement/loyalty-service
     ports:
       - "3017:3017"
-    networks:
-      - hotel-network
-
-  notification-preferences-service:
-    build: ./backend/domains/authentication/notification-preferences-service
-    ports:
-      - "3011:3011"
     networks:
       - hotel-network
 
@@ -160,45 +118,10 @@ services:
     networks:
       - hotel-network
 
-  payment-gateway-service:
-    build: ./backend/domains/booking/payment-gateway-service
-    ports:
-      - "3023:3023"
-    networks:
-      - hotel-network
-
-  payment-service:
-    build: ./backend/domains/booking/payment-service
-    ports:
-      - "3005:3005"
-    networks:
-      - hotel-network
-
-  reporting-service:
-    build: ./backend/domains/analytics/reporting-service
-    ports:
-      - "3014:3014"
-    networks:
-      - hotel-network
-
   review-service:
     build: ./backend/domains/customer-engagement/review-service
     ports:
       - "3007:3007"
-    networks:
-      - hotel-network
-
-  room-service:
-    build: ./backend/domains/booking/room-service
-    ports:
-      - "3013:3013"
-    networks:
-      - hotel-network
-
-  scheduler-service:
-    build: ./backend/domains/booking/scheduler-service
-    ports:
-      - "3018:3018"
     networks:
       - hotel-network
 
@@ -209,15 +132,15 @@ services:
     networks:
       - hotel-network
 
-  user-profile-service:
-    build: ./backend/domains/authentication/user-profile-service
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb
     ports:
-      - "3006:3006"
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
     networks:
       - hotel-network
-
-volumes:
-  mongodb_data:
 
 networks:
   hotel-network:
