@@ -10,7 +10,6 @@ app.use(requestLogger);
 
 app.use("/api/analytics", analyticsRoutes);
 
-
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3008;
