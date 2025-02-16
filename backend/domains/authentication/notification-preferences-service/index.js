@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const notificationPreferencesRoutes = require("./src/routes/notificationPreferencesRoutes");
+const notificationPreferencesRoutes = require("./src/routes/preferencesRoutes"); // Asegura que este sea el nombre correcto
 const requestLogger = require("./src/utils/middleware/requestLogger");
 const errorHandler = require("./src/utils/middleware/errorHandler");
 
