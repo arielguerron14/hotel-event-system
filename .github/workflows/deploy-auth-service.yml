@@ -37,7 +37,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTAUTH }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.aaaAWS_EC2_HOSTANALITYCS }} << 'EOF'
         # 1) Actualizar e instalar Docker si no está
         sudo yum update -y
         if ! command -v docker &> /dev/null
@@ -47,12 +47,12 @@ jobs:
           sudo systemctl enable docker
         fi
 
-        # 2) Generar el archivo .env en el servidor
-        echo "DB_HOST=${{ secrets.DB_HOSTAUTH }}" > .env
-        echo "DB_USER=${{ secrets.DB_USERAUTH }}" >> .env
-        echo "DB_PASSWORD=${{ secrets.DB_PASSAUTH }}" >> .env
-        echo "DB_NAME=${{ secrets.DB_NAMEAUTH }}" >> .env
-        echo "DB_PORT=${{ secrets.DB_PORTAUTH }}" >> .env
+        # 2) Generar el archivo .env en el servidor EC2
+        echo "DB_HOST=${{ secrets.DB_HOSTANALITYCS }}" > .env
+        echo "DB_USER=${{ secrets.DB_USERANALITYCS }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSANALITYCS }}" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAMEANALITYCS }}" >> .env
+        echo "DB_PORT=${{ secrets.DB_PORTANALITYCS }}" >> .env
 
         # 3) Detener y eliminar el contenedor anterior
         sudo docker stop auth-container || true

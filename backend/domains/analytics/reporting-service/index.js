@@ -14,5 +14,5 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3014;
 app.listen(PORT, () => {
-  console.log(`Reporting Service running ${PORT}`);
+  console.log(`Reporting Service running port ${PORT}`);
 });

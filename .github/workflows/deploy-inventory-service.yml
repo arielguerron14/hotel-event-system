@@ -37,7 +37,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTINVENTORY }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@${{ secrets.AWS_EC2_HOSTANALITYCS }} << 'EOF'
         # 1) Actualizar sistema e instalar Docker si no está presente
         sudo yum update -y
         if ! command -v docker &> /dev/null
@@ -48,12 +48,12 @@ jobs:
           sudo systemctl enable docker
         fi
 
-        # 2) Crear el archivo .env en EC2 con las credenciales de la BD
-        echo "DB_HOST=${{ secrets.DB_HOSTINVENTORY }}" > .env
-        echo "DB_USER=${{ secrets.DB_USERINVENTORY }}" >> .env
-        echo "DB_PASSWORD=${{ secrets.DB_PASSINVENTORY }}" >> .env
-        echo "DB_NAME=${{ secrets.DB_NAMEINVENTORY }}" >> .env
-        echo "DB_PORT=${{ secrets.DB_PORTINVENTORY }}" >> .env
+        # 2) Generar el archivo .env en el servidor EC2
+        echo "DB_HOST=${{ secrets.DB_HOSTANALITYCS }}" > .env
+        echo "DB_USER=${{ secrets.DB_USERANALITYCS }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSANALITYCS }}" >> .env
+        echo "DB_NAME=${{ secrets.DB_NAMEANALITYCS }}" >> .env
+        echo "DB_PORT=${{ secrets.DB_PORTANALITYCS }}" >> .env
 
         # 3) Detener y eliminar contenedor previo
         sudo docker stop inventory-container || true
