@@ -14,5 +14,5 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 3009;
 app.listen(PORT, () => {
-  console.log(`Inventory Service running on port ${PORT}`);
+  console.log(`Inventory Service running ${PORT}`);
 });
