@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { generateReport } = require("../controllers/reportingController");
+const reportingController = require("../controllers/reportingController"); // Asegúrate de que no falta ".js"
 
-router.get("/:reportType", generateReport);
+router.get("/", reportingController.getReports);
 
 module.exports = router;
