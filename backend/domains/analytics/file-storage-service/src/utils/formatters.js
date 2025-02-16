@@ -1,5 +1,4 @@
-module.exports = {
-  formatFileName: (filename) => {
-    return filename.trim().replace(/\s+/g, "_");
-  }
+// Formatea el nombre del archivo antes de guardarlo
+exports.formatFileName = (originalName) => {
+    return originalName.replace(/\s+/g, "_").toLowerCase();
 };

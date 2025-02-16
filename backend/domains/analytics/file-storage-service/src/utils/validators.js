@@ -1,5 +1,5 @@
-module.exports = {
-  validateFileUpload: (file) => {
-    return file && file.originalname && file.mimetype && file.size > 0;
-  }
+// Validar archivos antes de subirlos
+exports.validateFileUpload = (file) => {
+    const allowedTypes = ["image/png", "image/jpeg", "application/pdf"];
+    return allowedTypes.includes(file.mimetype);
 };
