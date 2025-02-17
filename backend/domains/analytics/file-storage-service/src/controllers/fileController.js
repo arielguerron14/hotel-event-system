@@ -23,3 +23,20 @@ exports.getFile = (req, res) => {
   res.sendFile(filePath);
 };
 
+exports.uploadFile = (req, res) => {
+  console.log("📩 Request recibido:", req.body);
+  console.log("📂 Archivo recibido:", req.file);
+  console.log("📂 Todos los archivos:", req.files);
+
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  res.json({
+    message: "File uploaded successfully",
+    filename: req.file.filename,
+    path: req.file.path
+  });
+};
+
+
