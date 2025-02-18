@@ -1,7 +1,4 @@
 const db = require("../models/db");
-const { validateInventoryData } = require("../utils/validators");
-const { formatInventoryItem } = require("../utils/formatters");
-const { generateInventoryId } = require("../utils/helpers");
 
 exports.getInventory = (req, res) => {
   db.query("SELECT * FROM inventory", (err, results) => {
@@ -10,33 +7,22 @@ exports.getInventory = (req, res) => {
   });
 };
 
-exports.updateInventory = (req, res) => {
-  const { item_name, quantity, location } = req.body;
-
-  if (!validateInventoryData(req.body)) {
-    return res.status(400).json({ error: "Invalid inventory data" });
-  }
-
-  const inventoryId = generateInventoryId();
-  const formattedItem = formatInventoryItem({ item_name, quantity, location });
-
+exports.addItem = (req, res) => {
+  const { name, quantity, price } = req.body;
   db.query(
-    "INSERT INTO inventory (inventory_id, item_name, quantity, location) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE quantity=?, location=?",
-    [
-      inventoryId,
-      formattedItem.item_name,
-      formattedItem.quantity,
-      formattedItem.location,
-      formattedItem.quantity,
-      formattedItem.location
-    ],
+    "INSERT INTO inventory (name, quantity, price) VALUES (?, ?, ?)",
+    [name, quantity, price],
     (err, results) => {
       if (err) return res.status(500).json({ error: err });
-      res.json({
-        message: "Inventory updated successfully",
-        inventoryId,
-        formattedItem
-      });
+      res.json({ message: "Item added successfully", id: results.insertId });
     }
   );
+};
+
+exports.deleteItem = (req, res) => {
+  const { id } = req.params;
+  db.query("DELETE FROM inventory WHERE id = ?", [id], (err, results) => {
+    if (err) return res.status(500).json({ error: err });
+    res.json({ message: "Item deleted successfully" });
+  });
 };

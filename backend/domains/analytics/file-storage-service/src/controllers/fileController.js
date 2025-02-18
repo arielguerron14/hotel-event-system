@@ -1,42 +1,30 @@
-const fs = require("fs");
 const path = require("path");
+const fs = require("fs");
 
 exports.uploadFile = (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  res.json({
-    message: "File uploaded successfully",
-    filename: req.file.filename,
-    path: req.file.path
-  });
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+    }
+    res.json({ message: "File uploaded successfully", filename: req.file.filename });
 };
 
 exports.getFile = (req, res) => {
-  const filePath = path.join("/var/www/file-storage", req.params.filename);
-  
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ error: "File not found" });
-  }
+    const filePath = path.resolve(__dirname, "../../uploads", req.params.filename);
 
-  res.sendFile(filePath);
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "File not found" });
+    }
+
+    res.sendFile(filePath);
 };
 
-exports.uploadFile = (req, res) => {
-  console.log("📩 Request recibido:", req.body);
-  console.log("📂 Archivo recibido:", req.file);
-  console.log("📂 Todos los archivos:", req.files);
-
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-
-  res.json({
-    message: "File uploaded successfully",
-    filename: req.file.filename,
-    path: req.file.path
-  });
+exports.deleteFile = (req, res) => {
+    const filePath = path.join(__dirname, "../../uploads", req.params.filename);
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "File not found" });
+    }
+    fs.unlinkSync(filePath);
+    res.json({ message: "File deleted successfully" });
 };
 
 
