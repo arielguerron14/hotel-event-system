@@ -15,7 +15,7 @@ exports.getBookingStats = (req, res) => {
 
 exports.getRevenueStats = (req, res) => {
   db.query(
-    "SELECT SUM(amount) AS total_revenue, DATE(payment_date) AS date FROM payments GROUP BY DATE(payment_date)",
+    "SELECT SUM(amount) AS total_revenue, DATE(payment_date) AS date FROM payments GROUP BY DATE(payment_date)  ",
     (err, results) => {
       if (err) return res.status(500).json({ error: err });
 
