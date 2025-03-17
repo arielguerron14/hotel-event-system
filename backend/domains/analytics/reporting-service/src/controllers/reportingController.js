@@ -38,3 +38,8 @@ exports.generateReport = (req, res) => {
     res.json({ message: "Report generated successfully", reportId, filePath });
   });
 };
+
+// **Agregamos la función `getReports` aquí**
+exports.getReports = (req, res) => {
+  res.json({ message: "List of reports" });
+};

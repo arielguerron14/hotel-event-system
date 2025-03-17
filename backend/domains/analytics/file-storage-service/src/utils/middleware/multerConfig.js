@@ -1,14 +1,27 @@
-const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
-module.exports = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ error: "Access Denied" });
+const storagePath = process.env.STORAGE_PATH || "/var/www/file-storage";
 
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (err) {
-    res.status(400).json({ error: "Invalid Token" });
+// Asegurar que el directorio existe
+if (!fs.existsSync(storagePath)) {
+    console.log(`📂 Creando directorio: ${storagePath}`);
+    fs.mkdirSync(storagePath, { recursive: true });
+}
+
+// Configuración de Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log("📂 Destino de guardado:", storagePath);
+    cb(null, storagePath);
+  },
+  filename: (req, file, cb) => {
+    console.log("📄 Nombre del archivo recibido:", file.originalname);
+    cb(null, Date.now() + path.extname(file.originalname));
   }
-};
+});
+
+const upload = multer({ storage });
+
+module.exports = upload;

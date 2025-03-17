@@ -1,5 +1,5 @@
 const db = require("../models/db");
-const { validateEmail } = require("../utils/validators");
+const validators = require("../utils/validationHelper"); // ✅ CORREGIDO
 
 exports.getUserProfile = (req, res) => {
   const userId = req.params.id;

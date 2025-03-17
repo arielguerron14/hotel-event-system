@@ -1,7 +1,4 @@
-const crypto = require("crypto");
-
-module.exports = {
-  generateFileId: () => {
-    return "FILE-" + crypto.randomBytes(4).toString("hex").toUpperCase();
-  }
+// Genera un ID único para los archivos subidos
+exports.generateFileId = () => {
+  return "FILE-" + Math.random().toString(36).substr(2, 9).toUpperCase();
 };

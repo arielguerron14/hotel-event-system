@@ -10,3 +10,4 @@ COPY . .
 EXPOSE 3019
 
 CMD ["npm", "start"]
+
